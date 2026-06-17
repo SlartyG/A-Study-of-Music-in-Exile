@@ -85,13 +85,17 @@ cd web && npm run build
 # Статика создаётся в web/out/
 ```
 
-**Полная инструкция по деплою на VPS (git clone → домен → HTTPS):** [DEPLOY.md](DEPLOY.md)
+**Полная инструкция по деплою на VPS (git clone → PM2 → nginx → HTTPS):** [DEPLOY.md](DEPLOY.md)
 
-Кратко: собрать `web/out/`, отдать через nginx, SSL через certbot.
+Кратко: `npm run build` → PM2 (`ecosystem.config.cjs`) раздаёт `out/` на :3000 → nginx проксирует на домен.
 
 ```bash
-# Проверить статику локально
-npx serve out -p 3000
+# На сервере после сборки
+pm2 start ecosystem.config.cjs
+pm2 save
+
+# Обновление
+./scripts/deploy.sh
 ```
 
 ## Ограничения работы

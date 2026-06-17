@@ -2,7 +2,7 @@
 
 Пошаговая инструкция: от `git clone` до сайта на своём домене с HTTPS.
 
-Сайт — статический экспорт Next.js (`web/out/`). На сервере в рантайме Node.js не нужен, только для сборки.
+Схема: **Next.js static export** → папка `web/out/` → **PM2 + serve** на `:3000` → **nginx** reverse proxy → домен + SSL.
 
 Замените `example.com` на свой домен везде, где встречается.
 
@@ -50,18 +50,28 @@ ufw allow 'Nginx Full'
 ufw enable
 ```
 
-Node.js 20 (для сборки):
+Node.js 20 и PM2:
 
 ```bash
 curl -fsSL https://deb.nodesource.com/setup_20.x | bash -
 apt install -y nodejs
+npm install -g pm2
 node -v   # v20.x
-npm -v
+pm2 -v
+```
+
+Автозапуск PM2 после перезагрузки сервера (выполнить один раз, скопировать и выполнить команду, которую выведет pm2):
+
+```bash
+pm2 startup systemd
+# pm2 выведет строку вида: sudo env PATH=... pm2 startup ...
+# выполните её, затем:
+pm2 save
 ```
 
 ---
 
-## 2. Клонирование и сборка
+## 2. Клонирование, сборка, PM2
 
 ```bash
 mkdir -p /var/www
@@ -70,42 +80,39 @@ git clone https://github.com/SlartyG/A-Study-of-Music-in-Exile.git
 cd A-Study-of-Music-in-Exile/web
 npm ci
 npm run build
+pm2 start ecosystem.config.cjs
+pm2 save
 ```
 
-После сборки статика лежит в `/var/www/A-Study-of-Music-in-Exile/web/out/`.
-
-Проверка без домена (на VPS):
+Проверка, что процесс живой:
 
 ```bash
-curl -s -o /dev/null -w "%{http_code}" http://127.0.0.1/
-# пока nginx не настроен — 404 или дефолтная страница nginx, это нормально
+pm2 status
+curl -s -o /dev/null -w "%{http_code}\n" http://127.0.0.1:3000/
+# ожидается 200
 ```
 
 ### Домен в метаданных (OG-теги)
 
-Перед сборкой на проде замените `example.com` в `web/app/layout.tsx`:
+Перед первой prod-сборкой замените `example.com` в `web/app/layout.tsx`:
 
 ```ts
 metadataBase: new URL("https://example.com"),
 ```
 
-Или соберите локально с правильным доменом и залейте `out/` через `rsync` (см. раздел «Обновление»).
+Потом пересоберите: `npm run build && pm2 reload ecosystem.config.cjs`.
 
 ### Если пересобираете данные с нуля
-
-На машине с Python и CSV-результатами анализа:
 
 ```bash
 cd /var/www/A-Study-of-Music-in-Exile
 python3 analysis/export_for_web.py
-cd web && npm run build
+cd web && npm run build && pm2 reload ecosystem.config.cjs
 ```
-
-Для деплоя уже готового лонгрида этот шаг не обязателен: JSON и картинки уже в репозитории.
 
 ---
 
-## 3. Nginx
+## 3. Nginx (reverse proxy → PM2)
 
 Создайте конфиг:
 
@@ -119,9 +126,6 @@ server {
     listen [::]:80;
     server_name example.com www.example.com;
 
-    root /var/www/A-Study-of-Music-in-Exile/web/out;
-    index index.html;
-
     gzip on;
     gzip_vary on;
     gzip_min_length 256;
@@ -133,27 +137,25 @@ server {
         application/json
         image/svg+xml;
 
-    # Долгий кэш для хэшированных чанков Next.js
     location /_next/static/ {
+        proxy_pass http://127.0.0.1:3000;
+        proxy_http_version 1.1;
+        proxy_set_header Host $host;
         add_header Cache-Control "public, max-age=31536000, immutable";
     }
 
-    # Картинки и JSON
-    location /images/ {
-        add_header Cache-Control "public, max-age=86400";
-    }
-    location /data/ {
-        add_header Cache-Control "public, max-age=3600";
-    }
-
-    # Статический экспорт Next.js (trailingSlash: true)
     location / {
-        try_files $uri $uri/ $uri/index.html /index.html;
+        proxy_pass http://127.0.0.1:3000;
+        proxy_http_version 1.1;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
     }
 }
 ```
 
-Включите сайт, отключите дефолт:
+Включите сайт:
 
 ```bash
 ln -s /etc/nginx/sites-available/music-exile /etc/nginx/sites-enabled/
@@ -161,7 +163,7 @@ rm -f /etc/nginx/sites-enabled/default
 nginx -t && systemctl reload nginx
 ```
 
-Откройте в браузере `http://example.com` — должен открыться лонгрид (пока без HTTPS).
+Откройте `http://example.com` — лонгрид должен открыться.
 
 ---
 
@@ -171,9 +173,7 @@ nginx -t && systemctl reload nginx
 certbot --nginx -d example.com -d www.example.com
 ```
 
-Certbot сам пропишет SSL в nginx и редирект с HTTP на HTTPS. Продление — автоматически (cron/systemd timer).
-
-Проверка:
+Проверка продления:
 
 ```bash
 certbot renew --dry-run
@@ -181,54 +181,52 @@ certbot renew --dry-run
 
 ---
 
-## 5. Обновление после изменений в git
+## 5. Обновление (деплой из git)
 
-На VPS:
+На VPS из корня репозитория:
 
 ```bash
 cd /var/www/A-Study-of-Music-in-Exile
-git pull
-cd web
-npm ci          # только если менялся package-lock.json
-npm run build
+./scripts/deploy.sh
 ```
 
-Пересборка занимает 1–2 минуты. Nginx перезапускать не нужно — он читает файлы из `out/` напрямую.
+Скрипт делает: `git pull` → `npm ci` → `npm run build` → `pm2 reload` (или `pm2 start` при первом запуске).
 
-### Скрипт деплоя (опционально)
+Вручную, без скрипта:
 
 ```bash
-cat > /var/www/deploy-music-exile.sh << 'EOF'
-#!/bin/bash
-set -e
-cd /var/www/A-Study-of-Music-in-Exile
+cd /var/www/A-Study-of-Music-in-Exile/web
 git pull
-cd web
 npm ci
-npm run build
-echo "OK: $(date)"
-EOF
-chmod +x /var/www/deploy-music-exile.sh
+npm run deploy    # build + pm2 reload
 ```
 
-Запуск: `/var/www/deploy-music-exile.sh`
+### PM2: полезные команды
+
+```bash
+pm2 status              # статус
+pm2 logs music-exile    # логи
+pm2 restart music-exile # жёсткий рестарт
+pm2 monit               # мониторинг CPU/RAM
+```
+
+Файл конфигурации: `web/ecosystem.config.cjs`.
 
 ---
 
 ## 6. Альтернатива: сборка на Mac, заливка на сервер
 
-Если на VPS мало RAM (< 1 GB) и `npm run build` падает:
+Если на VPS мало RAM и `npm run build` падает:
 
 ```bash
 # На Mac
 cd web
 npm ci && npm run build
-
-# Заливка только статики
 rsync -avz --delete out/ root@ВАШ_IP:/var/www/A-Study-of-Music-in-Exile/web/out/
-```
 
-На сервере nginx уже смотрит в эту папку — достаточно `rsync`.
+# На VPS — только перезапуск PM2 (файлы уже на месте)
+ssh root@ВАШ_IP "pm2 reload music-exile"
+```
 
 ---
 
@@ -236,12 +234,12 @@ rsync -avz --delete out/ root@ВАШ_IP:/var/www/A-Study-of-Music-in-Exile/web/o
 
 | Симптом | Решение |
 |---------|---------|
-| `dig` не показывает IP VPS | Подождать TTL DNS или проверить A-запись у регистратора |
-| Certbot: failed to verify | DNS ещё не обновился; порт 80 закрыт (`ufw allow 'Nginx Full'`) |
-| 404 на внутренних страницах | Проверить `try_files` в nginx (см. конфиг выше) |
-| Пустая страница после деплоя | Убедиться, что `root` указывает на `web/out`, а не на `web/` |
-| `npm run build` OOM на VPS | Собрать локально + `rsync` (раздел 6) |
-| Старые картинки после обновления | Жёсткое обновление в браузере (Cmd+Shift+R) |
+| `dig` не показывает IP VPS | Подождать TTL DNS или проверить A-запись |
+| Certbot: failed to verify | DNS не обновился; порт 80 закрыт |
+| 502 Bad Gateway | PM2 не запущен: `pm2 start web/ecosystem.config.cjs` |
+| Сайт не поднялся после reboot | `pm2 startup` + `pm2 save` |
+| `npm run build` OOM | Собрать на Mac + rsync (раздел 6) |
+| Порт 3000 занят | В `ecosystem.config.cjs` сменить порт и nginx `proxy_pass` |
 
 ---
 
@@ -250,9 +248,10 @@ rsync -avz --delete out/ root@ВАШ_IP:/var/www/A-Study-of-Music-in-Exile/web/o
 - [ ] DNS A-запись указывает на VPS
 - [ ] `metadataBase` в `web/app/layout.tsx` = ваш домен
 - [ ] `npm run build` проходит без ошибок
+- [ ] `pm2 status` — `music-exile` online
+- [ ] `curl localhost:3000` → 200
 - [ ] Сайт открывается по HTTPS
-- [ ] Боковая навигация, графики, карточки артистов работают
-- [ ] Ссылка на GitHub внизу ведёт на [репозиторий](https://github.com/SlartyG/A-Study-of-Music-in-Exile)
+- [ ] `pm2 startup` настроен
 
 ---
 
