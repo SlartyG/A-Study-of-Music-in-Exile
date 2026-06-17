@@ -5,7 +5,7 @@ export const metadata: Metadata = {
   title: "Музыка после отъезда — Веселов Александр",
   description:
     "Как изменились тексты 21 российского музыканта после эмиграции 2022 года. Количественное исследование с помощью NLP.",
-  metadataBase: new URL("https://example.com"),
+  metadataBase: new URL("https://musicexile.veselov.xyz"),
   openGraph: {
     title: "Музыка после отъезда",
     description:
