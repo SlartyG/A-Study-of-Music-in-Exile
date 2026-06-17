@@ -65,3 +65,4 @@ data/*.sqlite
 .coverage
 htmlcov/
 .pytest_cache/
+.cursor

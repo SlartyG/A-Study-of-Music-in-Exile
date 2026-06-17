@@ -1,0 +1,1325 @@
+[
+  {
+    "pseudonym": "Noize MC",
+    "display_name": "Noize MC",
+    "real_name": "Иван Алексеев",
+    "group": "сольный",
+    "country": "Литва",
+    "city": "Вильнюс",
+    "reloc_date": "МАР 2022",
+    "has_ops": true,
+    "ops_label": "ИНОСТРАННЫЙ АГЕНТ",
+    "n": 40,
+    "lex": {
+      "mean_before": -0.008354,
+      "mean_after": -0.005854,
+      "delta": 0.0025,
+      "d": 0.120579,
+      "p": 0.888979,
+      "significant": false
+    },
+    "bert": {
+      "mean_before": -0.185794,
+      "mean_after": -0.230771,
+      "delta": -0.044976,
+      "d": -0.16065,
+      "p": 0.759986,
+      "significant": false
+    },
+    "top3_before": [
+      {
+        "topic_id": 2,
+        "name": "Любовь и желание",
+        "share": 0.2073
+      },
+      {
+        "topic_id": 4,
+        "name": "Рэп-стиль",
+        "share": 0.1396
+      },
+      {
+        "topic_id": 7,
+        "name": "Деньги и жизнь",
+        "share": 0.1373
+      }
+    ],
+    "top3_after": [
+      {
+        "topic_id": 2,
+        "name": "Любовь и желание",
+        "share": 0.2193
+      },
+      {
+        "topic_id": 7,
+        "name": "Деньги и жизнь",
+        "share": 0.1688
+      },
+      {
+        "topic_id": 0,
+        "name": "Диалог и близость",
+        "share": 0.1172
+      }
+    ],
+    "photo": "/images/artist_00.jpg"
+  },
+  {
+    "pseudonym": "Oxxxymiron",
+    "display_name": "Oxxxymiron",
+    "real_name": "Мирон Федоров",
+    "group": "сольный",
+    "country": "Великобритания",
+    "city": "Лондон",
+    "reloc_date": "ФЕВ 2022",
+    "has_ops": true,
+    "ops_label": "ИНОСТРАННЫЙ АГЕНТ",
+    "n": 38,
+    "lex": {
+      "mean_before": -0.009061,
+      "mean_after": -0.012722,
+      "delta": -0.003661,
+      "d": -0.102616,
+      "p": 0.45733,
+      "significant": false
+    },
+    "bert": {
+      "mean_before": -0.215676,
+      "mean_after": -0.16426,
+      "delta": 0.051416,
+      "d": 0.159678,
+      "p": 0.615334,
+      "significant": false
+    },
+    "top3_before": [
+      {
+        "topic_id": 2,
+        "name": "Любовь и желание",
+        "share": 0.3442
+      },
+      {
+        "topic_id": 8,
+        "name": "Семья и люди",
+        "share": 0.1144
+      },
+      {
+        "topic_id": 4,
+        "name": "Рэп-стиль",
+        "share": 0.1139
+      }
+    ],
+    "top3_after": [
+      {
+        "topic_id": 0,
+        "name": "Диалог и близость",
+        "share": 0.195
+      },
+      {
+        "topic_id": 2,
+        "name": "Любовь и желание",
+        "share": 0.1935
+      },
+      {
+        "topic_id": 4,
+        "name": "Рэп-стиль",
+        "share": 0.1578
+      }
+    ],
+    "photo": "/images/artist_01.jpg"
+  },
+  {
+    "pseudonym": "Лу (Louna)",
+    "display_name": "Лу / Louna",
+    "real_name": "Лусинэ Геворкян",
+    "group": "Louna",
+    "country": "Израиль",
+    "city": "Тель-Авив",
+    "reloc_date": "МАР 2022",
+    "has_ops": false,
+    "ops_label": null,
+    "n": 56,
+    "lex": {
+      "mean_before": -0.016842,
+      "mean_after": -0.008264,
+      "delta": 0.008578,
+      "d": 0.347327,
+      "p": 0.085291,
+      "significant": false
+    },
+    "bert": {
+      "mean_before": -0.1912,
+      "mean_after": -0.004309,
+      "delta": 0.186891,
+      "d": 0.729064,
+      "p": 0.004631,
+      "significant": true
+    },
+    "top3_before": [
+      {
+        "topic_id": 8,
+        "name": "Семья и люди",
+        "share": 0.2006
+      },
+      {
+        "topic_id": 2,
+        "name": "Любовь и желание",
+        "share": 0.189
+      },
+      {
+        "topic_id": 3,
+        "name": "Мир и конец",
+        "share": 0.1856
+      }
+    ],
+    "top3_after": [
+      {
+        "topic_id": 0,
+        "name": "Диалог и близость",
+        "share": 0.3271
+      },
+      {
+        "topic_id": 2,
+        "name": "Любовь и желание",
+        "share": 0.2348
+      },
+      {
+        "topic_id": 8,
+        "name": "Семья и люди",
+        "share": 0.1536
+      }
+    ],
+    "photo": "/images/artist_02.jpg"
+  },
+  {
+    "pseudonym": "Монеточка",
+    "display_name": "Монеточка",
+    "real_name": "Елизавета Гырдымова",
+    "group": "сольная",
+    "country": "Литва",
+    "city": "Вильнюс",
+    "reloc_date": "ФЕВ 2022",
+    "has_ops": true,
+    "ops_label": "ИНОСТРАННЫЙ АГЕНТ",
+    "n": 30,
+    "lex": {
+      "mean_before": -0.004427,
+      "mean_after": -0.008169,
+      "delta": -0.003742,
+      "d": -0.148865,
+      "p": 0.477463,
+      "significant": false
+    },
+    "bert": {
+      "mean_before": -0.310941,
+      "mean_after": -0.227557,
+      "delta": 0.083384,
+      "d": 0.286673,
+      "p": 0.308096,
+      "significant": false
+    },
+    "top3_before": [
+      {
+        "topic_id": 2,
+        "name": "Любовь и желание",
+        "share": 0.2798
+      },
+      {
+        "topic_id": 7,
+        "name": "Деньги и жизнь",
+        "share": 0.1883
+      },
+      {
+        "topic_id": 9,
+        "name": "Слово и тело",
+        "share": 0.1643
+      }
+    ],
+    "top3_after": [
+      {
+        "topic_id": 0,
+        "name": "Диалог и близость",
+        "share": 0.226
+      },
+      {
+        "topic_id": 2,
+        "name": "Любовь и желание",
+        "share": 0.217
+      },
+      {
+        "topic_id": 3,
+        "name": "Мир и конец",
+        "share": 0.168
+      }
+    ],
+    "photo": "/images/artist_03.jpg"
+  },
+  {
+    "pseudonym": "Анастасия Креслина",
+    "display_name": "IC3PEAK",
+    "real_name": "Анастасия Креслина",
+    "group": "IC3PEAK",
+    "country": "Великобритания",
+    "city": "Лондон",
+    "reloc_date": "МАР 2022",
+    "has_ops": false,
+    "ops_label": null,
+    "n": 22,
+    "lex": {
+      "mean_before": -0.036057,
+      "mean_after": -0.007984,
+      "delta": 0.028073,
+      "d": 0.490972,
+      "p": 0.173824,
+      "significant": false
+    },
+    "bert": {
+      "mean_before": -0.123464,
+      "mean_after": -0.293367,
+      "delta": -0.169903,
+      "d": -0.348505,
+      "p": 0.09329,
+      "significant": false
+    },
+    "top3_before": [
+      {
+        "topic_id": 2,
+        "name": "Любовь и желание",
+        "share": 0.3236
+      },
+      {
+        "topic_id": 0,
+        "name": "Диалог и близость",
+        "share": 0.2878
+      },
+      {
+        "topic_id": 7,
+        "name": "Деньги и жизнь",
+        "share": 0.1688
+      }
+    ],
+    "top3_after": [
+      {
+        "topic_id": 2,
+        "name": "Любовь и желание",
+        "share": 0.3339
+      },
+      {
+        "topic_id": 0,
+        "name": "Диалог и близость",
+        "share": 0.2574
+      },
+      {
+        "topic_id": 8,
+        "name": "Семья и люди",
+        "share": 0.1275
+      }
+    ],
+    "photo": "/images/artist_04.jpg"
+  },
+  {
+    "pseudonym": "FACE",
+    "display_name": "FACE",
+    "real_name": "Иван Дремин",
+    "group": "сольный",
+    "country": "Греция",
+    "city": "nan",
+    "reloc_date": "ЯНВ 2022",
+    "has_ops": true,
+    "ops_label": "ИНОСТРАННЫЙ АГЕНТ",
+    "n": 26,
+    "lex": {
+      "mean_before": -0.006243,
+      "mean_after": -0.020812,
+      "delta": -0.014568,
+      "d": -0.385458,
+      "p": 0.626805,
+      "significant": false
+    },
+    "bert": {
+      "mean_before": -0.164927,
+      "mean_after": -0.330694,
+      "delta": -0.165766,
+      "d": -0.385338,
+      "p": 0.253594,
+      "significant": false
+    },
+    "top3_before": [
+      {
+        "topic_id": 2,
+        "name": "Любовь и желание",
+        "share": 0.3522
+      },
+      {
+        "topic_id": 4,
+        "name": "Рэп-стиль",
+        "share": 0.3096
+      },
+      {
+        "topic_id": 7,
+        "name": "Деньги и жизнь",
+        "share": 0.1039
+      }
+    ],
+    "top3_after": [
+      {
+        "topic_id": 2,
+        "name": "Любовь и желание",
+        "share": 0.3989
+      },
+      {
+        "topic_id": 4,
+        "name": "Рэп-стиль",
+        "share": 0.1836
+      },
+      {
+        "topic_id": 7,
+        "name": "Деньги и жизнь",
+        "share": 0.1271
+      }
+    ],
+    "photo": "/images/artist_05.jpg"
+  },
+  {
+    "pseudonym": "Земфира",
+    "display_name": "Земфира",
+    "real_name": "Земфира Рамазанова",
+    "group": "сольная",
+    "country": "Франция",
+    "city": "Париж",
+    "reloc_date": "МАР 2022",
+    "has_ops": true,
+    "ops_label": "ИНОСТРАННЫЙ АГЕНТ",
+    "n": 13,
+    "lex": {
+      "mean_before": -0.018858,
+      "mean_after": 0.018665,
+      "delta": 0.037523,
+      "d": 0.711228,
+      "p": 0.195492,
+      "significant": false
+    },
+    "bert": {
+      "mean_before": -0.183513,
+      "mean_after": 0.016125,
+      "delta": 0.199639,
+      "d": 0.491195,
+      "p": 0.286103,
+      "significant": false
+    },
+    "top3_before": [
+      {
+        "topic_id": 7,
+        "name": "Деньги и жизнь",
+        "share": 0.2659
+      },
+      {
+        "topic_id": 0,
+        "name": "Диалог и близость",
+        "share": 0.2059
+      },
+      {
+        "topic_id": 1,
+        "name": "Повседневность",
+        "share": 0.1466
+      }
+    ],
+    "top3_after": [
+      {
+        "topic_id": 2,
+        "name": "Любовь и желание",
+        "share": 0.2587
+      },
+      {
+        "topic_id": 0,
+        "name": "Диалог и близость",
+        "share": 0.252
+      },
+      {
+        "topic_id": 8,
+        "name": "Семья и люди",
+        "share": 0.1352
+      }
+    ],
+    "photo": "/images/artist_06.jpg"
+  },
+  {
+    "pseudonym": "Шура Би-2",
+    "display_name": "Би-2",
+    "real_name": "Александр Уман",
+    "group": "Би-2",
+    "country": "Израиль",
+    "city": "nan",
+    "reloc_date": "ФЕВ 2022",
+    "has_ops": true,
+    "ops_label": "ИНОСТРАННЫЙ АГЕНТ",
+    "n": 33,
+    "lex": {
+      "mean_before": -0.012038,
+      "mean_after": -0.002061,
+      "delta": 0.009977,
+      "d": 0.290042,
+      "p": 0.394337,
+      "significant": false
+    },
+    "bert": {
+      "mean_before": -0.169712,
+      "mean_after": -0.081564,
+      "delta": 0.088148,
+      "d": 0.233214,
+      "p": 0.413523,
+      "significant": false
+    },
+    "top3_before": [
+      {
+        "topic_id": 2,
+        "name": "Любовь и желание",
+        "share": 0.344
+      },
+      {
+        "topic_id": 7,
+        "name": "Деньги и жизнь",
+        "share": 0.1435
+      },
+      {
+        "topic_id": 0,
+        "name": "Диалог и близость",
+        "share": 0.1338
+      }
+    ],
+    "top3_after": [
+      {
+        "topic_id": 2,
+        "name": "Любовь и желание",
+        "share": 0.3979
+      },
+      {
+        "topic_id": 0,
+        "name": "Диалог и близость",
+        "share": 0.1691
+      },
+      {
+        "topic_id": 8,
+        "name": "Семья и люди",
+        "share": 0.1354
+      }
+    ],
+    "photo": "/images/artist_07.jpg"
+  },
+  {
+    "pseudonym": "Арсений Морозов",
+    "display_name": "Арсений Морозов",
+    "real_name": "Арсений Морозов",
+    "group": "Sonic Death / Padla Bear Outfit",
+    "country": "Грузия",
+    "city": "Тбилиси",
+    "reloc_date": "МАР 2022",
+    "has_ops": false,
+    "ops_label": null,
+    "n": 60,
+    "lex": {
+      "mean_before": -0.022672,
+      "mean_after": -0.002105,
+      "delta": 0.020566,
+      "d": 0.333569,
+      "p": 0.007845,
+      "significant": true
+    },
+    "bert": {
+      "mean_before": -0.156749,
+      "mean_after": -0.231397,
+      "delta": -0.074648,
+      "d": -0.216798,
+      "p": 0.178884,
+      "significant": false
+    },
+    "top3_before": [
+      {
+        "topic_id": 2,
+        "name": "Любовь и желание",
+        "share": 0.31
+      },
+      {
+        "topic_id": 9,
+        "name": "Слово и тело",
+        "share": 0.1816
+      },
+      {
+        "topic_id": 8,
+        "name": "Семья и люди",
+        "share": 0.1251
+      }
+    ],
+    "top3_after": [
+      {
+        "topic_id": 2,
+        "name": "Любовь и желание",
+        "share": 0.2583
+      },
+      {
+        "topic_id": 3,
+        "name": "Мир и конец",
+        "share": 0.2206
+      },
+      {
+        "topic_id": 7,
+        "name": "Деньги и жизнь",
+        "share": 0.152
+      }
+    ],
+    "photo": "/images/artist_08.jpg"
+  },
+  {
+    "pseudonym": "Айгель Гайсина",
+    "display_name": "Айгель",
+    "real_name": "Айгель Гайсина",
+    "group": "АИГЕЛ",
+    "country": "Турция",
+    "city": "nan",
+    "reloc_date": "СЕН 2022",
+    "has_ops": false,
+    "ops_label": null,
+    "n": 25,
+    "lex": {
+      "mean_before": 0.011448,
+      "mean_after": -0.010699,
+      "delta": -0.022146,
+      "d": -0.368731,
+      "p": 0.557033,
+      "significant": false
+    },
+    "bert": {
+      "mean_before": 0.149976,
+      "mean_after": -0.071417,
+      "delta": -0.221393,
+      "d": -0.567026,
+      "p": 0.021167,
+      "significant": true
+    },
+    "top3_before": [
+      {
+        "topic_id": 9,
+        "name": "Слово и тело",
+        "share": 0.3332
+      },
+      {
+        "topic_id": 2,
+        "name": "Любовь и желание",
+        "share": 0.1576
+      },
+      {
+        "topic_id": 7,
+        "name": "Деньги и жизнь",
+        "share": 0.1442
+      }
+    ],
+    "top3_after": [
+      {
+        "topic_id": 9,
+        "name": "Слово и тело",
+        "share": 0.3003
+      },
+      {
+        "topic_id": 2,
+        "name": "Любовь и желание",
+        "share": 0.2957
+      },
+      {
+        "topic_id": 3,
+        "name": "Мир и конец",
+        "share": 0.1036
+      }
+    ],
+    "photo": "/images/artist_09.png"
+  },
+  {
+    "pseudonym": "Моргенштерн",
+    "display_name": "Моргенштерн",
+    "real_name": "Алишер Валеев",
+    "group": "сольный",
+    "country": "ОАЭ",
+    "city": "Дубай",
+    "reloc_date": "НОЯ 2021",
+    "has_ops": true,
+    "ops_label": "ИНОСТРАННЫЙ АГЕНТ",
+    "n": 43,
+    "lex": {
+      "mean_before": -0.012709,
+      "mean_after": -0.015277,
+      "delta": -0.002568,
+      "d": -0.038059,
+      "p": 0.476417,
+      "significant": false
+    },
+    "bert": {
+      "mean_before": -0.26998,
+      "mean_after": -0.256979,
+      "delta": 0.013001,
+      "d": 0.031573,
+      "p": 0.883236,
+      "significant": false
+    },
+    "top3_before": [
+      {
+        "topic_id": 4,
+        "name": "Рэп-стиль",
+        "share": 0.5637
+      },
+      {
+        "topic_id": 2,
+        "name": "Любовь и желание",
+        "share": 0.132
+      },
+      {
+        "topic_id": 7,
+        "name": "Деньги и жизнь",
+        "share": 0.092
+      }
+    ],
+    "top3_after": [
+      {
+        "topic_id": 4,
+        "name": "Рэп-стиль",
+        "share": 0.4418
+      },
+      {
+        "topic_id": 2,
+        "name": "Любовь и желание",
+        "share": 0.1868
+      },
+      {
+        "topic_id": 3,
+        "name": "Мир и конец",
+        "share": 0.1313
+      }
+    ],
+    "photo": "/images/artist_10.jpg"
+  },
+  {
+    "pseudonym": "Кирилл Иванов",
+    "display_name": "СБПЧ",
+    "real_name": "Кирилл Иванов",
+    "group": "СБПЧ",
+    "country": "Грузия",
+    "city": "Тбилиси",
+    "reloc_date": "МАР 2022",
+    "has_ops": false,
+    "ops_label": null,
+    "n": 27,
+    "lex": {
+      "mean_before": -0.013383,
+      "mean_after": -0.008787,
+      "delta": 0.004596,
+      "d": 0.146316,
+      "p": 0.979183,
+      "significant": false
+    },
+    "bert": {
+      "mean_before": -0.21071,
+      "mean_after": -0.225904,
+      "delta": -0.015194,
+      "d": -0.043254,
+      "p": 0.929974,
+      "significant": false
+    },
+    "top3_before": [
+      {
+        "topic_id": 2,
+        "name": "Любовь и желание",
+        "share": 0.3101
+      },
+      {
+        "topic_id": 0,
+        "name": "Диалог и близость",
+        "share": 0.1908
+      },
+      {
+        "topic_id": 3,
+        "name": "Мир и конец",
+        "share": 0.1291
+      }
+    ],
+    "top3_after": [
+      {
+        "topic_id": 2,
+        "name": "Любовь и желание",
+        "share": 0.4036
+      },
+      {
+        "topic_id": 0,
+        "name": "Диалог и близость",
+        "share": 0.1619
+      },
+      {
+        "topic_id": 3,
+        "name": "Мир и конец",
+        "share": 0.1451
+      }
+    ],
+    "photo": "/images/artist_11.jpg"
+  },
+  {
+    "pseudonym": "Гречка",
+    "display_name": "Гречка",
+    "real_name": "Анастасия Иванова",
+    "group": "сольная",
+    "country": "Грузия",
+    "city": "Тбилиси",
+    "reloc_date": "МАР 2022",
+    "has_ops": false,
+    "ops_label": null,
+    "n": 86,
+    "lex": {
+      "mean_before": 0.003953,
+      "mean_after": 0.001193,
+      "delta": -0.00276,
+      "d": -0.068941,
+      "p": 0.920508,
+      "significant": false
+    },
+    "bert": {
+      "mean_before": -0.198264,
+      "mean_after": -0.128584,
+      "delta": 0.06968,
+      "d": 0.166996,
+      "p": 0.107186,
+      "significant": false
+    },
+    "top3_before": [
+      {
+        "topic_id": 2,
+        "name": "Любовь и желание",
+        "share": 0.4073
+      },
+      {
+        "topic_id": 7,
+        "name": "Деньги и жизнь",
+        "share": 0.1917
+      },
+      {
+        "topic_id": 3,
+        "name": "Мир и конец",
+        "share": 0.1447
+      }
+    ],
+    "top3_after": [
+      {
+        "topic_id": 2,
+        "name": "Любовь и желание",
+        "share": 0.4318
+      },
+      {
+        "topic_id": 0,
+        "name": "Диалог и близость",
+        "share": 0.1645
+      },
+      {
+        "topic_id": 7,
+        "name": "Деньги и жизнь",
+        "share": 0.1343
+      }
+    ],
+    "photo": "/images/artist_12.jpg"
+  },
+  {
+    "pseudonym": "Борис Гребенщиков",
+    "display_name": "Борис Гребенщиков",
+    "real_name": "Борис Борисович Гребенщиков",
+    "group": "Аквариум",
+    "country": "Великобритания",
+    "city": "Лондон",
+    "reloc_date": "МАР 2022",
+    "has_ops": true,
+    "ops_label": "ИНОСТРАННЫЙ АГЕНТ",
+    "n": 51,
+    "lex": {
+      "mean_before": -0.002095,
+      "mean_after": -0.010366,
+      "delta": -0.00827,
+      "d": -0.353712,
+      "p": 0.041422,
+      "significant": true
+    },
+    "bert": {
+      "mean_before": -0.002488,
+      "mean_after": -0.117998,
+      "delta": -0.11551,
+      "d": -0.381226,
+      "p": 0.070716,
+      "significant": false
+    },
+    "top3_before": [
+      {
+        "topic_id": 2,
+        "name": "Любовь и желание",
+        "share": 0.3822
+      },
+      {
+        "topic_id": 0,
+        "name": "Диалог и близость",
+        "share": 0.1711
+      },
+      {
+        "topic_id": 3,
+        "name": "Мир и конец",
+        "share": 0.1294
+      }
+    ],
+    "top3_after": [
+      {
+        "topic_id": 2,
+        "name": "Любовь и желание",
+        "share": 0.4014
+      },
+      {
+        "topic_id": 0,
+        "name": "Диалог и близость",
+        "share": 0.2004
+      },
+      {
+        "topic_id": 3,
+        "name": "Мир и конец",
+        "share": 0.1198
+      }
+    ],
+    "photo": "/images/artist_13.png"
+  },
+  {
+    "pseudonym": "Максим Покровский",
+    "display_name": "Максим Покровский",
+    "real_name": "Максим Покровский",
+    "group": "Ногу свело!",
+    "country": "США",
+    "city": "Нью-Йорк",
+    "reloc_date": "МАР 2022",
+    "has_ops": true,
+    "ops_label": "ИНОСТРАННЫЙ АГЕНТ",
+    "n": 44,
+    "lex": {
+      "mean_before": -0.006401,
+      "mean_after": -0.014273,
+      "delta": -0.007873,
+      "d": -0.522688,
+      "p": 0.002351,
+      "significant": true
+    },
+    "bert": {
+      "mean_before": -0.336933,
+      "mean_after": -0.386839,
+      "delta": -0.049906,
+      "d": -0.150829,
+      "p": 0.315418,
+      "significant": false
+    },
+    "top3_before": [
+      {
+        "topic_id": 2,
+        "name": "Любовь и желание",
+        "share": 0.2571
+      },
+      {
+        "topic_id": 1,
+        "name": "Повседневность",
+        "share": 0.2526
+      },
+      {
+        "topic_id": 3,
+        "name": "Мир и конец",
+        "share": 0.1099
+      }
+    ],
+    "top3_after": [
+      {
+        "topic_id": 6,
+        "name": "Улица и политика",
+        "share": 0.4739
+      },
+      {
+        "topic_id": 1,
+        "name": "Повседневность",
+        "share": 0.1437
+      },
+      {
+        "topic_id": 2,
+        "name": "Любовь и желание",
+        "share": 0.111
+      }
+    ],
+    "photo": "/images/artist_14.jpg"
+  },
+  {
+    "pseudonym": "Максим Леонидов",
+    "display_name": "Максим Леонидов",
+    "real_name": "Максим Леонидов",
+    "group": "сольный",
+    "country": "Израиль",
+    "city": "nan",
+    "reloc_date": "МАЙ 2022",
+    "has_ops": false,
+    "ops_label": null,
+    "n": 64,
+    "lex": {
+      "mean_before": -0.003844,
+      "mean_after": 0.004249,
+      "delta": 0.008094,
+      "d": 0.291097,
+      "p": 0.88051,
+      "significant": false
+    },
+    "bert": {
+      "mean_before": 0.072625,
+      "mean_after": -0.000159,
+      "delta": -0.072783,
+      "d": -0.182199,
+      "p": 0.035723,
+      "significant": true
+    },
+    "top3_before": [
+      {
+        "topic_id": 2,
+        "name": "Любовь и желание",
+        "share": 0.2077
+      },
+      {
+        "topic_id": 3,
+        "name": "Мир и конец",
+        "share": 0.2053
+      },
+      {
+        "topic_id": 0,
+        "name": "Диалог и близость",
+        "share": 0.1607
+      }
+    ],
+    "top3_after": [
+      {
+        "topic_id": 0,
+        "name": "Диалог и близость",
+        "share": 0.3336
+      },
+      {
+        "topic_id": 2,
+        "name": "Любовь и желание",
+        "share": 0.1904
+      },
+      {
+        "topic_id": 3,
+        "name": "Мир и конец",
+        "share": 0.1201
+      }
+    ],
+    "photo": "/images/artist_15.jpg"
+  },
+  {
+    "pseudonym": "Вера Мусаелян",
+    "display_name": "АлоэВера",
+    "real_name": "Вера Мусаелян",
+    "group": "АлоэВера",
+    "country": "Германия",
+    "city": "Берлин",
+    "reloc_date": "МАР 2022",
+    "has_ops": false,
+    "ops_label": null,
+    "n": 36,
+    "lex": {
+      "mean_before": -0.007528,
+      "mean_after": -0.007494,
+      "delta": 3.4e-05,
+      "d": 0.001598,
+      "p": 0.501739,
+      "significant": false
+    },
+    "bert": {
+      "mean_before": -0.074905,
+      "mean_after": 0.001005,
+      "delta": 0.075909,
+      "d": 0.183311,
+      "p": 0.514354,
+      "significant": false
+    },
+    "top3_before": [
+      {
+        "topic_id": 0,
+        "name": "Диалог и близость",
+        "share": 0.2491
+      },
+      {
+        "topic_id": 2,
+        "name": "Любовь и желание",
+        "share": 0.2003
+      },
+      {
+        "topic_id": 8,
+        "name": "Семья и люди",
+        "share": 0.1384
+      }
+    ],
+    "top3_after": [
+      {
+        "topic_id": 2,
+        "name": "Любовь и желание",
+        "share": 0.2578
+      },
+      {
+        "topic_id": 0,
+        "name": "Диалог и близость",
+        "share": 0.2299
+      },
+      {
+        "topic_id": 7,
+        "name": "Деньги и жизнь",
+        "share": 0.2202
+      }
+    ],
+    "photo": "/images/artist_16.jpg"
+  },
+  {
+    "pseudonym": "Вася Обломов",
+    "display_name": "Вася Обломов",
+    "real_name": "Василий Гончаров",
+    "group": "сольный",
+    "country": "США",
+    "city": "Лос-Анджелес",
+    "reloc_date": "СЕН 2022",
+    "has_ops": true,
+    "ops_label": "ИНОСТРАННЫЙ АГЕНТ",
+    "n": 44,
+    "lex": {
+      "mean_before": -0.003173,
+      "mean_after": 0.00313,
+      "delta": 0.006303,
+      "d": 0.402025,
+      "p": 0.105704,
+      "significant": false
+    },
+    "bert": {
+      "mean_before": -0.332751,
+      "mean_after": -0.213306,
+      "delta": 0.119445,
+      "d": 0.336684,
+      "p": 0.025041,
+      "significant": true
+    },
+    "top3_before": [
+      {
+        "topic_id": 2,
+        "name": "Любовь и желание",
+        "share": 0.3197
+      },
+      {
+        "topic_id": 8,
+        "name": "Семья и люди",
+        "share": 0.1057
+      },
+      {
+        "topic_id": 4,
+        "name": "Рэп-стиль",
+        "share": 0.0972
+      }
+    ],
+    "top3_after": [
+      {
+        "topic_id": 2,
+        "name": "Любовь и желание",
+        "share": 0.3412
+      },
+      {
+        "topic_id": 8,
+        "name": "Семья и люди",
+        "share": 0.2283
+      },
+      {
+        "topic_id": 0,
+        "name": "Диалог и близость",
+        "share": 0.1152
+      }
+    ],
+    "photo": "/images/artist_17.jpg"
+  },
+  {
+    "pseudonym": "Виктор Ужаков",
+    "display_name": "Ploho",
+    "real_name": "Виктор Ужаков",
+    "group": "Ploho",
+    "country": "Сербия",
+    "city": "Белград",
+    "reloc_date": "МАР 2022",
+    "has_ops": false,
+    "ops_label": null,
+    "n": 8,
+    "lex": {
+      "mean_before": 0.000201,
+      "mean_after": -0.009233,
+      "delta": -0.009433,
+      "d": -0.42489,
+      "p": 0.951886,
+      "significant": false
+    },
+    "bert": {
+      "mean_before": -0.398887,
+      "mean_after": -0.176353,
+      "delta": 0.222534,
+      "d": 0.775699,
+      "p": 0.176003,
+      "significant": false
+    },
+    "top3_before": [
+      {
+        "topic_id": 2,
+        "name": "Любовь и желание",
+        "share": 0.3992
+      },
+      {
+        "topic_id": 3,
+        "name": "Мир и конец",
+        "share": 0.2882
+      },
+      {
+        "topic_id": 7,
+        "name": "Деньги и жизнь",
+        "share": 0.1416
+      }
+    ],
+    "top3_after": [
+      {
+        "topic_id": 2,
+        "name": "Любовь и желание",
+        "share": 0.4124
+      },
+      {
+        "topic_id": 9,
+        "name": "Слово и тело",
+        "share": 0.2031
+      },
+      {
+        "topic_id": 4,
+        "name": "Рэп-стиль",
+        "share": 0.1643
+      }
+    ],
+    "photo": "/images/artist_18.jpg"
+  },
+  {
+    "pseudonym": "Kate NV",
+    "display_name": "Kate NV",
+    "real_name": "Катерина Шилоносова",
+    "group": "сольная",
+    "country": "Сербия",
+    "city": "Белград",
+    "reloc_date": "МАР 2022",
+    "has_ops": false,
+    "ops_label": null,
+    "n": 1,
+    "lex": {
+      "mean_before": 0.25,
+      "mean_after": 0.018519,
+      "delta": -0.231481,
+      "d": null,
+      "p": null,
+      "significant": false
+    },
+    "bert": {
+      "mean_before": 0.961076,
+      "mean_after": 0.0,
+      "delta": -0.961076,
+      "d": null,
+      "p": null,
+      "significant": false
+    },
+    "top3_before": [
+      {
+        "topic_id": 3,
+        "name": "Мир и конец",
+        "share": 0.5614
+      },
+      {
+        "topic_id": 2,
+        "name": "Любовь и желание",
+        "share": 0.2443
+      },
+      {
+        "topic_id": 7,
+        "name": "Деньги и жизнь",
+        "share": 0.1026
+      }
+    ],
+    "top3_after": [
+      {
+        "topic_id": 3,
+        "name": "Мир и конец",
+        "share": 0.4268
+      },
+      {
+        "topic_id": 2,
+        "name": "Любовь и желание",
+        "share": 0.3995
+      },
+      {
+        "topic_id": 6,
+        "name": "Улица и политика",
+        "share": 0.1288
+      }
+    ],
+    "photo": "/images/artist_19.jpg"
+  },
+  {
+    "pseudonym": "Ushko",
+    "display_name": "Ushko",
+    "real_name": "Дарья Короткова",
+    "group": "сольная",
+    "country": "Армения",
+    "city": "Ереван",
+    "reloc_date": "МАР 2022",
+    "has_ops": false,
+    "ops_label": null,
+    "n": 52,
+    "lex": {
+      "mean_before": 0.00166,
+      "mean_after": -0.000181,
+      "delta": -0.001842,
+      "d": -0.064083,
+      "p": 0.013231,
+      "significant": true
+    },
+    "bert": {
+      "mean_before": -0.059244,
+      "mean_after": -0.055135,
+      "delta": 0.004109,
+      "d": 0.018429,
+      "p": 0.340982,
+      "significant": false
+    },
+    "top3_before": [
+      {
+        "topic_id": 5,
+        "name": "Тупик",
+        "share": 0.3406
+      },
+      {
+        "topic_id": 2,
+        "name": "Любовь и желание",
+        "share": 0.2132
+      },
+      {
+        "topic_id": 0,
+        "name": "Диалог и близость",
+        "share": 0.1382
+      }
+    ],
+    "top3_after": [
+      {
+        "topic_id": 2,
+        "name": "Любовь и желание",
+        "share": 0.3735
+      },
+      {
+        "topic_id": 0,
+        "name": "Диалог и близость",
+        "share": 0.1798
+      },
+      {
+        "topic_id": 5,
+        "name": "Тупик",
+        "share": 0.1355
+      }
+    ],
+    "photo": "/images/artist_20.jpg"
+  }
+]

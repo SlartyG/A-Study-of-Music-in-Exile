@@ -8,9 +8,8 @@
   2. Очистить тексты и лемматизировать с pymorphy2.
   3. Сопоставить леммы со словарём тональности RuSentiLex.
   4. Вычислить метрики тональности для каждого трека.
-  5. Сравнить периоды "до" и "после" двумя способами:
-       A. Balanced — равное кол-во треков на артиста (самые новые из "до").
-       B. All      — все имеющиеся треки.
+  5. Сравнить периоды "до" и "после" на сбалансированной выборке
+       (равное N треков на артиста, N самых новых из каждого периода).
   6. Провести статистические тесты (Mann–Whitney U, Cohen's d).
   7. Сохранить результаты в CSV и визуализации в analysis/output/.
 
@@ -34,6 +33,8 @@ import numpy as np
 import pandas as pd
 import seaborn as sns
 from scipy import stats
+
+from timeline import build_timeline_series
 
 try:
     import pymorphy2
@@ -261,18 +262,17 @@ def build_df(songs: list[dict], musicians: dict[int, dict],
 
 def balance_periods(df: pd.DataFrame) -> pd.DataFrame:
     """
-    Метод A: для каждого артиста берём N треков «до» и N треков «после»,
-    где N = кол-во треков «после». Из «до» берём N самых новых по дате.
+    Для каждого артиста — равное N треков «до» и «после».
+    N = min(кол-во до, кол-во после); из каждого периода берём N самых новых.
     """
     parts = []
     for _, grp in df.groupby("artist_genius_id"):
-        after  = grp[grp["period"] == "after"]
-        before = grp[grp["period"] == "before"]
-        n = len(after)
-        if n == 0 or len(before) == 0:
+        after  = grp[grp["period"] == "after"].sort_values("release_date", ascending=False)
+        before = grp[grp["period"] == "before"].sort_values("release_date", ascending=False)
+        n = min(len(after), len(before))
+        if n == 0:
             continue
-        before_top = before.sort_values("release_date", ascending=False).head(n)
-        parts.extend([after, before_top])
+        parts.extend([after.head(n), before.head(n)])
     return pd.concat(parts, ignore_index=True) if parts else pd.DataFrame()
 
 
@@ -332,7 +332,7 @@ def compute_results(df: pd.DataFrame, label: str) -> dict:
         })
 
     per_artist = pd.DataFrame(per_artist_rows)
-    per_artist.to_csv(OUT_DIR / f"per_artist_{label}.csv", index=False, encoding="utf-8")
+    per_artist.to_csv(OUT_DIR / "per_artist.csv", index=False, encoding="utf-8")
     return {"overall": overall, "per_artist": per_artist}
 
 
@@ -363,43 +363,34 @@ def _sig_stars(p: float | None) -> str:
     return "n.s."
 
 
-def fig1_violin(df_all: pd.DataFrame, df_bal: pd.DataFrame,
-                res_all: dict, res_bal: dict) -> None:
-    """Скрипичные диаграммы: общее сравнение по двум методам."""
-    fig, axes = plt.subplots(1, 2, figsize=(14, 6), sharey=True)
-    fig.suptitle("Тональность текстов до и после эмиграции", fontsize=14, y=1.01)
+def fig1_violin(df: pd.DataFrame, res: dict) -> None:
+    """Скрипичная диаграмма: сбалансированное сравнение до/после."""
+    fig, ax = plt.subplots(figsize=(8, 6))
+    fig.suptitle("Тональность текстов до и после эмиграции\n(сбалансированная выборка)", fontsize=13, y=1.02)
 
-    datasets = [
-        (df_bal, res_bal, "Метод A: сбалансированная выборка\n(равное N треков на артиста)"),
-        (df_all, res_all, "Метод B: все имеющиеся треки"),
-    ]
+    plot_data = df[df["period"].isin(["before", "after"])].copy()
+    plot_data["Период"] = plot_data["period"].map(LABEL)
+    order = [LABEL["before"], LABEL["after"]]
+    pal   = {LABEL[k]: v for k, v in PALETTE.items()}
 
-    for ax, (data, res, title) in zip(axes, datasets):
-        plot_data = data[data["period"].isin(["before", "after"])].copy()
-        plot_data["Период"] = plot_data["period"].map(LABEL)
+    sns.violinplot(
+        data=plot_data, x="Период", y=PRIMARY_METRIC,
+        hue="Период", order=order, palette=pal,
+        inner="box", cut=0, ax=ax, legend=False,
+    )
+    ax.axhline(0, color="gray", linestyle="--", linewidth=0.8, alpha=0.6)
+    ax.set_xlabel("")
+    ax.set_ylabel(PRIMARY_METRIC_LABEL)
 
-        order = [LABEL["before"], LABEL["after"]]
-        pal   = {LABEL[k]: v for k, v in PALETTE.items()}
-
-        sns.violinplot(
-            data=plot_data, x="Период", y=PRIMARY_METRIC,
-            hue="Период", order=order, palette=pal,
-            inner="box", cut=0, ax=ax, legend=False,
-        )
-        ax.axhline(0, color="gray", linestyle="--", linewidth=0.8, alpha=0.6)
-        ax.set_title(title, fontsize=10)
-        ax.set_xlabel("")
-        ax.set_ylabel(PRIMARY_METRIC_LABEL if ax is axes[0] else "")
-
-        o = res["overall"]
-        d_str = f"{o['cohens_d']:.3f}" if o["cohens_d"] is not None else "—"
-        ax.text(
-            0.97, 0.03,
-            f"p = {o['p']:.3f}  {_sig_stars(o['p'])}\nd = {d_str}",
-            transform=ax.transAxes, ha="right", va="bottom",
-            fontsize=9, color="#555555",
-            bbox=dict(boxstyle="round,pad=0.3", fc="white", ec="none", alpha=0.7),
-        )
+    o = res["overall"]
+    d_str = f"{o['cohens_d']:.3f}" if o["cohens_d"] is not None else "—"
+    ax.text(
+        0.97, 0.03,
+        f"p = {o['p']:.3f}  {_sig_stars(o['p'])}\nd = {d_str}",
+        transform=ax.transAxes, ha="right", va="bottom",
+        fontsize=9, color="#555555",
+        bbox=dict(boxstyle="round,pad=0.3", fc="white", ec="none", alpha=0.7),
+    )
 
     plt.tight_layout()
     plt.savefig(OUT_DIR / "1_violin_overall.png")
@@ -407,7 +398,7 @@ def fig1_violin(df_all: pd.DataFrame, df_bal: pd.DataFrame,
     print("  ✓ 1_violin_overall.png")
 
 
-def fig2_artist_bars(res: dict, label: str) -> None:
+def fig2_artist_bars(res: dict) -> None:
     """Горизонтальные бары: среднее до/после по каждому артисту."""
     pa = res["per_artist"].sort_values("mean_before").reset_index(drop=True)
     if pa.empty:
@@ -425,7 +416,7 @@ def fig2_artist_bars(res: dict, label: str) -> None:
     ax.set_yticklabels(pa["pseudonym"], fontsize=8)
     ax.axvline(0, color="black", linewidth=0.7)
     ax.set_xlabel(PRIMARY_METRIC_LABEL)
-    ax.set_title(f"Тональность до и после эмиграции — по артистам\n({label})", fontsize=11)
+    ax.set_title("Тональность до и после эмиграции — по артистам\n(сбалансированная выборка)", fontsize=11)
     ax.legend(loc="lower right", fontsize=9)
 
     # Звёздочки для статистически значимых изменений
@@ -435,10 +426,9 @@ def fig2_artist_bars(res: dict, label: str) -> None:
             ax.text(x_max, i, "*", va="center", fontsize=11, color="red")
 
     plt.tight_layout()
-    fn = f"2_artist_bars_{label}.png"
-    plt.savefig(OUT_DIR / fn)
+    plt.savefig(OUT_DIR / "2_artist_bars.png")
     plt.close()
-    print(f"  ✓ {fn}")
+    print("  ✓ 2_artist_bars.png")
 
 
 def fig3_scatter(res: dict) -> None:
@@ -509,7 +499,7 @@ def fig4_kde(df: pd.DataFrame) -> None:
     print("  ✓ 4_kde_distribution.png")
 
 
-def fig5_delta(res: dict, label: str) -> None:
+def fig5_delta(res: dict) -> None:
     """Дельта-диаграмма: изменение тональности, отсортированное."""
     pa = res["per_artist"].sort_values("delta").reset_index(drop=True)
     if pa.empty:
@@ -522,7 +512,7 @@ def fig5_delta(res: dict, label: str) -> None:
     ax.axvline(0, color="black", linewidth=0.8)
     ax.set_xlabel("Δ тональность  (после − до)")
     ax.set_title(
-        f"Изменение тональности после эмиграции ({label})\n"
+        "Изменение тональности после эмиграции (сбалансированная выборка)\n"
         "Зелёный = позитивнее, красный = негативнее. * — значимо (p < 0.05)",
         fontsize=10,
     )
@@ -536,46 +526,53 @@ def fig5_delta(res: dict, label: str) -> None:
                     va="center", fontsize=12)
 
     plt.tight_layout()
-    fn = f"5_delta_{label}.png"
-    plt.savefig(OUT_DIR / fn)
+    plt.savefig(OUT_DIR / "5_delta.png")
     plt.close()
-    print(f"  ✓ {fn}")
+    print("  ✓ 5_delta.png")
 
 
 def fig6_timeline(df: pd.DataFrame) -> None:
-    """Временной ряд: средняя тональность по годам."""
-    df2 = df.copy()
-    df2["year"] = df2["release_date"].dt.year
-
-    agg = (
-        df2.groupby(["year", "period"])[PRIMARY_METRIC]
-        .agg(mean="mean", sem=lambda x: x.sem(), count="count")
-        .reset_index()
-    )
-    agg = agg[(agg["year"] >= 2014) & (agg["year"] <= 2026) & (agg["count"] >= 3)]
+    """Временной ряд: календарное деление до/с 2022, итог в точке 2022."""
+    before, after = build_timeline_series(df, PRIMARY_METRIC)
 
     fig, ax = plt.subplots(figsize=(12, 5))
 
-    for period in ("before", "after"):
-        sub = agg[agg["period"] == period].sort_values("year")
-        ax.plot(sub["year"], sub["mean"],
-                marker="o", color=PALETTE[period],
-                label=LABEL[period], linewidth=2.2)
-        ax.fill_between(
-            sub["year"],
-            sub["mean"] - sub["sem"],
-            sub["mean"] + sub["sem"],
-            alpha=0.18, color=PALETTE[period],
-        )
+    if not before.empty:
+        regular = before[~before["is_summary"]]
+        summary = before[before["is_summary"]]
+        if not regular.empty:
+            ax.plot(regular["year"], regular["mean"],
+                    marker="o", color=PALETTE["before"],
+                    label=LABEL["before"], linewidth=2.2)
+            ax.fill_between(regular["year"],
+                            regular["mean"] - regular["sem"],
+                            regular["mean"] + regular["sem"],
+                            alpha=0.18, color=PALETTE["before"])
+        if not summary.empty:
+            ax.plot(summary["year"], summary["mean"],
+                    marker="s", markersize=8, color=PALETTE["before"],
+                    label=f"{LABEL['before']} (итог)", linewidth=2.2, linestyle="--")
+
+    if not after.empty:
+        ax.plot(after["year"], after["mean"],
+                marker="o", color=PALETTE["after"],
+                label=LABEL["after"], linewidth=2.2)
+        ax.fill_between(after["year"],
+                        after["mean"] - after["sem"],
+                        after["mean"] + after["sem"],
+                        alpha=0.18, color=PALETTE["after"])
 
     ax.axvline(2022, color="black", linewidth=1.2, linestyle=":", alpha=0.7)
-    ax.text(2022.1, ax.get_ylim()[1] * 0.97, "Волна\nэмиграции\n2022",
+    ax.text(2022.1, ax.get_ylim()[1] * 0.97, "2022",
             fontsize=8, va="top", color="black", alpha=0.7)
     ax.axhline(0, color="gray", linewidth=0.5, linestyle="--")
     ax.set_xlabel("Год выпуска трека")
     ax.set_ylabel(PRIMARY_METRIC_LABEL)
-    ax.set_title("Динамика тональности по годам (±SEM, треки ≥ 3 в год)", fontsize=12)
-    ax.legend(fontsize=10)
+    ax.set_title(
+        "Динамика тональности по годам (±SEM, треки ≥ 3 в год; до 2022 / с 2022)",
+        fontsize=12,
+    )
+    ax.legend(fontsize=9)
     ax.xaxis.set_major_locator(matplotlib.ticker.MultipleLocator(1))
 
     plt.tight_layout()
@@ -617,7 +614,7 @@ def fig7_heatmap(df: pd.DataFrame) -> None:
         center=0, linewidths=0.4, ax=ax,
         cbar_kws={"label": "Индекс тональности"},
     )
-    ax.set_title("Средний индекс тональности по артистам", fontsize=11)
+    ax.set_title("Средний индекс тональности по артистам (сбалансированная выборка)", fontsize=11)
     ax.set_xlabel("")
     ax.set_ylabel("")
 
@@ -647,50 +644,35 @@ def main() -> None:
     songs = load_songs(set(musicians.keys()))
     print(f"      Треков с текстами: {len(songs):,}")
 
-    # Тональность
+    # Тональность (полный скоринг → сбалансированная выборка)
     print("[3/5] Вычисляю тональность треков …")
-    df = build_df(songs, musicians, lexicon)
-    print(f"      Треков в выборке: {len(df):,}")
-    print(f"      до/после: {df['period'].value_counts().to_dict()}")
+    df_full = build_df(songs, musicians, lexicon)
+    df = balance_periods(df_full)
+    n_before = (df["period"] == "before").sum()
+    n_after  = (df["period"] == "after").sum()
+    print(f"      Сбалансированная выборка: {len(df):,} треков "
+          f"({n_before:,} до / {n_after:,} после)")
+    print(f"      Артистов: {df['artist_genius_id'].nunique()}")
 
-    # Сохраняем полный датасет
-    df.to_csv(OUT_DIR / "sentiment_scores_all.csv", index=False, encoding="utf-8")
+    df.to_csv(OUT_DIR / "sentiment_scores.csv", index=False, encoding="utf-8")
 
     # Статистика
     print("[4/5] Статистика …")
-    df_bal    = balance_periods(df)
-    res_bal   = compute_results(df_bal, "balanced")
-    res_all   = compute_results(df,     "all")
+    res = compute_results(df, "balanced")
 
-    # Итоговая таблица
-    print("\n  ┌─────────────────────────────┬──────────────┬──────────────┐")
-    print("  │ Показатель                  │  Balanced    │  All         │")
-    print("  ├─────────────────────────────┼──────────────┼──────────────┤")
-    for k, fmt in [
-        ("mean_before",   ".4f"),
-        ("mean_after",    ".4f"),
-        ("cohens_d",      ".4f"),
-        ("p",             ".4f"),
-    ]:
-        vb = res_bal["overall"].get(k)
-        va = res_all["overall"].get(k)
-        sb = f"{vb:{fmt}}" if vb is not None else "—"
-        sa = f"{va:{fmt}}" if va is not None else "—"
-        print(f"  │ {k:<27} │ {sb:>12} │ {sa:>12} │")
-    sig_b = _sig_stars(res_bal["overall"].get("p"))
-    sig_a = _sig_stars(res_all["overall"].get("p"))
-    print(f"  │ {'significance':<27} │ {sig_b:>12} │ {sig_a:>12} │")
-    print("  └─────────────────────────────┴──────────────┴──────────────┘")
+    o = res["overall"]
+    print(f"\n      mean до:    {o['mean_before']:+.4f}")
+    print(f"      mean после: {o['mean_after']:+.4f}")
+    print(f"      Cohen's d:  {o['cohens_d']:+.4f}")
+    print(f"      p-value:    {o['p']:.4f}  {_sig_stars(o['p'])}")
 
     # Визуализации
     print("\n[5/5] Создаю визуализации …")
-    fig1_violin(df, df_bal, res_all, res_bal)
-    fig2_artist_bars(res_all, "all")
-    fig2_artist_bars(res_bal, "balanced")
-    fig3_scatter(res_all)
+    fig1_violin(df, res)
+    fig2_artist_bars(res)
+    fig3_scatter(res)
     fig4_kde(df)
-    fig5_delta(res_all, "all")
-    fig5_delta(res_bal, "balanced")
+    fig5_delta(res)
     fig6_timeline(df)
     fig7_heatmap(df)
 

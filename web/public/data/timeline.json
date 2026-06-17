@@ -1,0 +1,86 @@
+[
+  {
+    "year": 1989,
+    "period_cal": "before",
+    "mean_lex": -0.017429,
+    "sem_lex": 0.011023,
+    "n": 6
+  },
+  {
+    "year": 2003,
+    "period_cal": "before",
+    "mean_lex": 0.017321,
+    "sem_lex": 0.001341,
+    "n": 6
+  },
+  {
+    "year": 2017,
+    "period_cal": "before",
+    "mean_lex": -0.005927,
+    "sem_lex": 0.006427,
+    "n": 13
+  },
+  {
+    "year": 2018,
+    "period_cal": "before",
+    "mean_lex": -0.005636,
+    "sem_lex": 0.004137,
+    "n": 38
+  },
+  {
+    "year": 2019,
+    "period_cal": "before",
+    "mean_lex": -0.005551,
+    "sem_lex": 0.003562,
+    "n": 31
+  },
+  {
+    "year": 2020,
+    "period_cal": "before",
+    "mean_lex": -0.005019,
+    "sem_lex": 0.001988,
+    "n": 191
+  },
+  {
+    "year": 2021,
+    "period_cal": "before",
+    "mean_lex": -0.010204,
+    "sem_lex": 0.002833,
+    "n": 272
+  },
+  {
+    "year": 2022,
+    "period_cal": "after",
+    "mean_lex": -0.004613,
+    "sem_lex": 0.001856,
+    "n": 188
+  },
+  {
+    "year": 2023,
+    "period_cal": "after",
+    "mean_lex": -0.005854,
+    "sem_lex": 0.003831,
+    "n": 107
+  },
+  {
+    "year": 2024,
+    "period_cal": "after",
+    "mean_lex": -0.006672,
+    "sem_lex": 0.002573,
+    "n": 101
+  },
+  {
+    "year": 2025,
+    "period_cal": "after",
+    "mean_lex": -0.001123,
+    "sem_lex": 0.001502,
+    "n": 145
+  },
+  {
+    "year": 2026,
+    "period_cal": "after",
+    "mean_lex": -0.006578,
+    "sem_lex": 0.004242,
+    "n": 56
+  }
+]

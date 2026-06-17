@@ -169,15 +169,15 @@ def build_records(songs: list[dict], musicians: dict[int, dict]) -> pd.DataFrame
 # ── Балансировка ─────────────────────────────────────────────────────────────
 
 def balance_periods(df: pd.DataFrame) -> pd.DataFrame:
+    """Равное N треков в обоих периодах (N самых новых из каждого)."""
     parts = []
     for _, grp in df.groupby("artist_genius_id"):
-        after  = grp[grp["period"] == "after"]
-        before = grp[grp["period"] == "before"]
-        n = len(after)
-        if n == 0 or len(before) == 0:
+        after  = grp[grp["period"] == "after"].sort_values("release_date", ascending=False)
+        before = grp[grp["period"] == "before"].sort_values("release_date", ascending=False)
+        n = min(len(after), len(before))
+        if n == 0:
             continue
-        before_top = before.sort_values("release_date", ascending=False).head(n)
-        parts.extend([after, before_top])
+        parts.extend([after.head(n), before.head(n)])
     return pd.concat(parts, ignore_index=True) if parts else pd.DataFrame()
 
 
@@ -592,17 +592,18 @@ def main() -> None:
     print(f"      Музыкантов: {len(musicians)}, треков: {len(songs):,}")
 
     df = build_records(songs, musicians)
-    print(f"      После фильтрации: {len(df):,} треков")
+    df = balance_periods(df)
+    print(f"      Сбалансированная выборка: {len(df):,} треков")
     print(f"      до/после: {df['period'].value_counts().to_dict()}")
 
-    # LDA на полном корпусе
+    # LDA на сбалансированном корпусе
     print(f"\n[2/5] Обучаю LDA (K={N_TOPICS}, iter={MAX_ITER}) …")
     docs = df["doc"].tolist()
     lda, vec, doc_topic = fit_lda(docs)
     print(f"      Словарь TF-IDF: {len(vec.get_feature_names_out()):,} слов")
     print(f"      Perplexity: {lda.perplexity(vec.transform(docs)):.1f}")
 
-    # Добавить топики в df
+    # Добавить топики в df_bal
     for i in range(N_TOPICS):
         df[f"topic_{i}"] = doc_topic[:, i]
     df["dominant_topic"] = doc_topic.argmax(axis=1)
@@ -616,9 +617,7 @@ def main() -> None:
 
     # Статистика
     print("\n[3/5] Статистика …")
-    df_bal    = balance_periods(df)
-    prevalence_all = topic_prevalence(df)
-    prevalence_bal = topic_prevalence(df_bal)
+    prevalence = topic_prevalence(df)
 
     chi = chi2_topic_shift(df)
     print(f"\n  χ² тест на сдвиг распределения тем:")
@@ -626,8 +625,8 @@ def main() -> None:
     sig = "значимо *" if chi["p"] < 0.05 else "n.s."
     print(f"    → {sig}")
 
-    print("\n  Изменение долей тем (после − до, метод All):")
-    for _, row in prevalence_all.sort_values("delta", ascending=False).iterrows():
+    print("\n  Изменение долей тем (после − до):")
+    for _, row in prevalence.sort_values("delta", ascending=False).iterrows():
         idx = int(row["topic"].replace("topic_", ""))
         arrow = "↑" if row["delta"] > 0 else "↓"
         print(f"    Тема {idx+1:2d} {arrow}  Δ = {row['delta']:+.4f}  ({labels[idx]})")
@@ -636,8 +635,7 @@ def main() -> None:
     save_cols = ["song_id", "title", "pseudonym", "period", "release_date",
                  "dominant_topic"] + [f"topic_{i}" for i in range(N_TOPICS)]
     df[save_cols].to_csv(OUT_DIR / "topic_scores.csv", index=False, encoding="utf-8")
-    prevalence_all.to_csv(OUT_DIR / "topic_prevalence_all.csv", index=False, encoding="utf-8")
-    prevalence_bal.to_csv(OUT_DIR / "topic_prevalence_balanced.csv", index=False, encoding="utf-8")
+    prevalence.to_csv(OUT_DIR / "topic_prevalence.csv", index=False, encoding="utf-8")
 
     # Топ-слова
     with open(OUT_DIR / "topic_top_words.txt", "w", encoding="utf-8") as fh:
@@ -648,8 +646,8 @@ def main() -> None:
     # Визуализации
     print("\n[4/5] Создаю визуализации …")
     fig1_top_words(top_words, labels)
-    fig2_prevalence_bars(prevalence_all, labels)
-    fig3_delta_topics(prevalence_all, labels)
+    fig2_prevalence_bars(prevalence, labels)
+    fig3_delta_topics(prevalence, labels)
     fig4_dominant_topic_dist(df, labels)
     fig5_artist_heatmap(df, labels, "before")
     fig5_artist_heatmap(df, labels, "after")

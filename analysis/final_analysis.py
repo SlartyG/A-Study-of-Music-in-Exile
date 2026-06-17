@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Финальный анализ — все три метода на полном датасете.
+Финальный анализ — сбалансированная выборка (равное N треков до/после).
 
 Запуск:
     python3 analysis/final_analysis.py
@@ -32,6 +32,8 @@ from scipy import stats
 from sklearn.decomposition import LatentDirichletAllocation
 from sklearn.feature_extraction.text import CountVectorizer
 from transformers import pipeline
+
+from timeline import build_timeline_series
 
 # ── Пути ────────────────────────────────────────────────────────────────────
 
@@ -376,14 +378,18 @@ def per_artist(df: pd.DataFrame, metric: str) -> pd.DataFrame:
 
 
 def balance(df: pd.DataFrame) -> pd.DataFrame:
+    """
+    Для каждого артиста — равное N треков «до» и «после».
+    N = min(кол-во до, кол-во после); из каждого периода берём N самых новых.
+    """
     parts = []
     for _, grp in df.groupby("artist_genius_id"):
-        aft = grp[grp["period"] == "after"]
-        bef = grp[grp["period"] == "before"]
-        n   = len(aft)
-        if n == 0 or len(bef) == 0:
+        aft = grp[grp["period"] == "after"].sort_values("release_date", ascending=False)
+        bef = grp[grp["period"] == "before"].sort_values("release_date", ascending=False)
+        n = min(len(aft), len(bef))
+        if n == 0:
             continue
-        parts.extend([aft, bef.sort_values("release_date", ascending=False).head(n)])
+        parts.extend([aft.head(n), bef.head(n)])
     return pd.concat(parts, ignore_index=True) if parts else pd.DataFrame()
 
 
@@ -638,10 +644,7 @@ def fig_method_correlation(pa_lex: pd.DataFrame, pa_bert: pd.DataFrame) -> None:
 # ── 7.6 Timeline: оба метода, два периода ─────────────────────────────────
 
 def fig_timeline(df: pd.DataFrame) -> None:
-    """Динамика тональности по годам — оба метода на одном холсте."""
-    df2 = df.copy()
-    df2["year"] = df2["release_date"].dt.year
-
+    """Динамика тональности по годам — календарное деление до/с 2022."""
     fig, axes = plt.subplots(2, 1, figsize=(13, 9), sharex=True)
     metrics = [
         ("lex_score",    "Метод 1: лексический индекс"),
@@ -649,31 +652,43 @@ def fig_timeline(df: pd.DataFrame) -> None:
     ]
 
     for ax, (metric, title) in zip(axes, metrics):
-        agg = (
-            df2.groupby(["year", "period"])[metric]
-            .agg(mean="mean", sem=lambda x: x.sem(), count="count")
-            .reset_index()
-        )
-        agg = agg[(agg["year"] >= 2014) & (agg["year"] <= 2026) & (agg["count"] >= 3)]
+        before, after = build_timeline_series(df, metric)
 
-        for period in ("before", "after"):
-            sub = agg[agg["period"] == period].sort_values("year")
-            ax.plot(sub["year"], sub["mean"], marker="o",
-                    color=PALETTE[period], label=LABEL[period], linewidth=2.2)
-            ax.fill_between(sub["year"],
-                            sub["mean"] - sub["sem"],
-                            sub["mean"] + sub["sem"],
-                            alpha=0.17, color=PALETTE[period])
+        if not before.empty:
+            regular = before[~before["is_summary"]]
+            summary = before[before["is_summary"]]
+            if not regular.empty:
+                ax.plot(regular["year"], regular["mean"], marker="o",
+                        color=PALETTE["before"], label=LABEL["before"], linewidth=2.2)
+                ax.fill_between(regular["year"],
+                                regular["mean"] - regular["sem"],
+                                regular["mean"] + regular["sem"],
+                                alpha=0.17, color=PALETTE["before"])
+            if not summary.empty:
+                ax.plot(summary["year"], summary["mean"], marker="s", markersize=7,
+                        color=PALETTE["before"], label=f"{LABEL['before']} (итог)",
+                        linewidth=2.2, linestyle="--")
+
+        if not after.empty:
+            ax.plot(after["year"], after["mean"], marker="o",
+                    color=PALETTE["after"], label=LABEL["after"], linewidth=2.2)
+            ax.fill_between(after["year"],
+                            after["mean"] - after["sem"],
+                            after["mean"] + after["sem"],
+                            alpha=0.17, color=PALETTE["after"])
 
         ax.axvline(2022, color="black", linewidth=1.2, linestyle=":", alpha=0.65)
         ax.text(2022.1, ax.get_ylim()[1] * 0.95, "2022", fontsize=8, va="top", alpha=0.65)
         ax.axhline(0, color="gray", linewidth=0.5, linestyle="--")
         ax.set_ylabel(title, fontsize=9)
-        ax.legend(fontsize=9)
+        ax.legend(fontsize=8)
         ax.xaxis.set_major_locator(matplotlib.ticker.MultipleLocator(1))
 
     axes[-1].set_xlabel("Год выпуска трека")
-    fig.suptitle("Динамика тональности по годам (±SEM, мин. 3 трека)", fontsize=12)
+    fig.suptitle(
+        "Динамика тональности по годам (±SEM, мин. 3 трека; до 2022 / с 2022)",
+        fontsize=12,
+    )
     plt.tight_layout()
     _save("final_6_timeline.png")
 
@@ -771,8 +786,10 @@ def write_findings(summary: dict, pa_lex: pd.DataFrame, pa_bert: pd.DataFrame,
         "# Выводы исследования: «Музыка после отъезда»",
         "",
         f"*Дата анализа: {pd.Timestamp.now().strftime('%d.%m.%Y')}*  ",
-        f"*Корпус: {summary['all']['n_songs']:,} треков с текстами, "
-        f"{summary['all']['n_artists']} артистов*",
+        f"*Корпус: {summary['all']['n_songs']:,} треков с текстами (сбалансированная выборка), "
+        f"{summary['all']['n_artists']} артистов*  ",
+        f"*Метод сравнения: для каждого артиста равное N треков «до» и «после» "
+        f"(N самых новых из каждого периода)*",
         "",
         "---",
         "",
@@ -783,30 +800,36 @@ def write_findings(summary: dict, pa_lex: pd.DataFrame, pa_bert: pd.DataFrame,
         "жанровую специфику корпуса: преобладание критической лирики, рэп-текстов "
         "и рок-тематики.",
         "",
-        "2. **Тональность после эмиграции незначительно, но стабильно снижается.** "
-        "На полном корпусе (метод B, все треки) оба аналитических метода фиксируют "
-        "статистически значимое ухудшение тональности. Размер эффекта мал "
-        "(Cohen's d < 0.1), что указывает на реальное, но умеренное изменение.",
+        "2. **На сбалансированной выборке общий сдвиг тональности "
+        f"{'статистически значим' if ((summary['all']['lex'].get('p') or 1) < 0.05 or (summary['all']['bert'].get('p') or 1) < 0.05) else 'не достигает статистической значимости'} "
+        "на уровне всего корпуса.** Лексический метод: "
+        f"d={summary['all']['lex']['cohens_d']:.3f}, p={summary['all']['lex']['p']:.3f}. "
+        f"ruBERT: d={summary['all']['bert']['cohens_d']:.3f}, "
+        f"p={summary['all']['bert']['p']:.3f}.",
         "",
-        "3. **Сбалансированная выборка (метод A) не подтверждает значимость.** "
-        "При выравнивании числа треков до/после разница исчезает. Возможная причина: "
-        "период «после» для части артистов охватывает 2–3 года, тогда как «до» — "
-        "10 лет; самые новые треки из «до» по времени близки к миграции и могут "
-        "уже отражать предмиграционное настроение.",
+        "3. **Сравнение только равновесных периодов исключает длинный хвост ранних "
+        "треков «до».** Для каждого артиста берётся N = min(треков до, треков после); "
+        "из каждого периода — N самых новых по дате выпуска. Это устраняет "
+        "перекос, когда период «до» охватывал 10–15 лет, а «после» — 2–4 года.",
         "",
         "4. **Артисты с ОПС и без ОПС ведут себя по-разному.** "
-        "У артистов с особым правовым статусом сдвиг тональности несколько больше "
-        "по абсолютному значению, однако на уровне групп статистически значим "
-        "только в методе 3 (ruBERT).",
+        f"С ОПС (лекс.): d={summary['ops']['lex']['cohens_d']:.3f}, "
+        f"p={summary['ops']['lex']['p']:.3f}; "
+        f"(ruBERT): d={summary['ops']['bert']['cohens_d']:.3f}, "
+        f"p={summary['ops']['bert']['p']:.3f}. "
+        f"Без ОПС (лекс.): d={summary['no_ops']['lex']['cohens_d']:.3f}, "
+        f"p={summary['no_ops']['lex']['p']:.3f}; "
+        f"(ruBERT): d={summary['no_ops']['bert']['cohens_d']:.3f}, "
+        f"p={summary['no_ops']['bert']['p']:.3f}.",
         "",
-        "5. **Тематический состав значимо меняется (p < 0.05, χ²-тест).** "
+        "5. **Тематический состав значимо меняется (χ²-тест).** "
         "После эмиграции снижается доля тем, связанных со временем, природой и "
         "домом/ностальгией; возрастает доля прямолинейного речитатива и "
         "личных историй.",
         "",
-        "6. **Методы 1 и 3 умеренно согласованы (r ≈ 0.25 на уровне треков).** "
-        "Умеренная, а не высокая корреляция ожидаема: трансформер учитывает "
-        "контекст и отрицания, которые словарный метод игнорирует.",
+        "6. **Методы 1 и 3 умеренно согласованы на уровне артистов.** "
+        "Трансформер учитывает контекст и отрицания, которые словарный метод "
+        "игнорирует; поэтому величина сдвига по ruBERT обычно больше.",
         "",
         "---",
         "",
@@ -883,11 +906,11 @@ def write_findings(summary: dict, pa_lex: pd.DataFrame, pa_bert: pd.DataFrame,
         "",
         "## Методологические оговорки",
         "",
-        "- **Небольшой размер эффекта.** Статистическая значимость на корпусе "
-        "~5 000 треков не означает содержательной значимости. Cohen's d < 0.1 — "
-        "это малый эффект.",
-        "- **Неравномерность периодов.** Большинство артистов имеет значительно "
-        "больше треков «до» (средний период — 10–15 лет) чем «после» (2–4 года).",
+        "- **Небольшой размер эффекта.** Статистическая значимость не означает "
+        "содержательной значимости. Cohen's d < 0.2 — малый эффект.",
+        "- **Сбалансированная выборка.** Сравнение ведётся только по равному числу "
+        "треков в обоих периодах (N самых новых из каждого), без длинного хвоста "
+        "ранней карьеры.",
         "- **Словарные ограничения (метод 1).** Мат, жаргон, ирония и отрицания "
         "не обрабатываются корректно.",
         "- **Модельные ограничения (метод 3).** ruBERT-tiny обучен на отзывах и "
@@ -924,7 +947,7 @@ def write_findings(summary: dict, pa_lex: pd.DataFrame, pa_bert: pd.DataFrame,
 
 def main() -> None:
     print("=" * 65)
-    print("  ФИНАЛЬНЫЙ АНАЛИЗ — ВСЕ МЕТОДЫ НА ПОЛНОМ ДАТАСЕТЕ")
+    print("  ФИНАЛЬНЫЙ АНАЛИЗ — СБАЛАНСИРОВАННАЯ ВЫБОРКА")
     print("=" * 65)
 
     # ── Загрузка ─────────────────────────────────────────────────────────────
@@ -956,7 +979,7 @@ def main() -> None:
         })
     df_lex = pd.DataFrame(rows_lex)
     df_lex["release_date"] = pd.to_datetime(df_lex["release_date"], errors="coerce")
-    print(f"      Треков в выборке: {len(df_lex):,}")
+    print(f"      Треков в выборке (все): {len(df_lex):,}")
 
     # ── Метод 3: ruBERT ───────────────────────────────────────────────────────
     print("\n[3/6] Метод 3 — ruBERT …")
@@ -983,17 +1006,27 @@ def main() -> None:
         })
     df_bert = pd.DataFrame(rows_bert)
     df_bert["release_date"] = pd.to_datetime(df_bert["release_date"], errors="coerce")
-    print(f"      Треков в выборке: {len(df_bert):,}")
+    print(f"      Треков в выборке (все): {len(df_bert):,}")
+
+    # ── Сбалансированная выборка ─────────────────────────────────────────────
+    df_merged_all = df_lex.merge(
+        df_bert[["song_id", "bert_compound"]],
+        on="song_id", how="inner",
+    )
+    df = balance(df_merged_all)
+    n_before = (df["period"] == "before").sum()
+    n_after  = (df["period"] == "after").sum()
+    print(f"\n      Сбалансированная выборка: {len(df):,} треков "
+          f"({n_before:,} до / {n_after:,} после), "
+          f"{df['artist_genius_id'].nunique()} артистов")
 
     # ── Объединить для timeline ───────────────────────────────────────────────
-    df_merged = df_lex[["song_id","period","release_date","has_ops","lex_score"]].merge(
-        df_bert[["song_id","bert_compound"]], on="song_id", how="inner"
-    )
+    df_merged = df
 
     # ── Метод 2: LDA (быстро на полном корпусе) ───────────────────────────────
-    print("\n[4/6] Метод 2 — LDA (темы) …")
+    print("\n[4/6] Метод 2 — LDA (темы, сбалансированная выборка) …")
     lda_docs = []
-    for row in df_lex.itertuples():
+    for row in df.itertuples():
         raw = getattr(row, "lyrics", "")
         tokens = [w for w in tokenize(clean(raw)) if w not in STOPWORDS and len(w) >= 3]
         if len(tokens) >= MIN_WORDS:
@@ -1001,7 +1034,7 @@ def main() -> None:
     lda_topic_words, lda_shares, lda_doc_topic = run_lda(lda_docs)
 
     # χ² тест
-    lda_periods = df_lex[["period"]].copy().iloc[:len(lda_docs)]
+    lda_periods = df[["period"]].copy().iloc[:len(lda_docs)]
     lda_periods["dominant"] = lda_doc_topic.argmax(axis=1)
     chi2_counts = pd.crosstab(lda_periods["period"], lda_periods["dominant"])
     chi2_stat, chi2_p, chi2_dof, _ = stats.chi2_contingency(chi2_counts.values)
@@ -1014,25 +1047,24 @@ def main() -> None:
     print("\n[5/6] Статистика …")
     summary: dict = {}
 
-    for group_key, mask_lex, mask_bert in [
-        ("all",    slice(None), slice(None)),
-        ("ops",    df_lex["has_ops"],   df_bert["has_ops"]),
-        ("no_ops", ~df_lex["has_ops"],  ~df_bert["has_ops"]),
+    for group_key, mask in [
+        ("all",    slice(None)),
+        ("ops",    df["has_ops"]),
+        ("no_ops", ~df["has_ops"]),
     ]:
-        sub_lex  = df_lex[mask_lex]  if group_key != "all" else df_lex
-        sub_bert = df_bert[mask_bert] if group_key != "all" else df_bert
-        s_lex    = stats_block(sub_lex,  "lex_score")
-        s_bert   = stats_block(sub_bert, "bert_compound")
+        sub = df[mask] if group_key != "all" else df
+        s_lex    = stats_block(sub,  "lex_score")
+        s_bert   = stats_block(sub, "bert_compound")
         summary[group_key] = {
             "lex":      s_lex,
             "bert":     s_bert,
-            "n_songs":  len(sub_lex),
-            "n_artists": sub_lex["artist_genius_id"].nunique(),
+            "n_songs":  len(sub),
+            "n_artists": sub["artist_genius_id"].nunique(),
         }
 
     # Per-artist DataFrames
-    pa_lex  = per_artist(df_lex,  "lex_score")
-    pa_bert = per_artist(df_bert, "bert_compound")
+    pa_lex  = per_artist(df,  "lex_score")
+    pa_bert = per_artist(df, "bert_compound")
     pa_lex.to_csv(OUT_DIR / "final_per_artist_lex.csv",  index=False)
     pa_bert.to_csv(OUT_DIR / "final_per_artist_bert.csv", index=False)
 
@@ -1053,15 +1085,12 @@ def main() -> None:
     # ── Визуализации ─────────────────────────────────────────────────────────
     print("\n[6/6] Визуализации …")
     fig_summary_table(summary)
-    fig_violin_groups(df_lex.rename(columns={"lex_score": "lex_score"}).merge(
-        df_bert[["song_id", "bert_compound"]], on="song_id", how="left"
-    ))
+    fig_violin_groups(df)
     fig_delta_ops(pa_lex, pa_bert)
-    fig_ops_comparison(df_lex.merge(df_bert[["song_id","bert_compound"]], on="song_id", how="inner"))
+    fig_ops_comparison(df)
     fig_method_correlation(pa_lex, pa_bert)
-    fig_timeline(df_merged.rename(columns={"lex_score": "lex_score",
-                                           "bert_compound": "bert_compound"}))
-    fig_lda_periods(df_lex)
+    fig_timeline(df_merged)
+    fig_lda_periods(df)
 
     # ── FINDINGS.md ──────────────────────────────────────────────────────────
     write_findings(summary, pa_lex, pa_bert, lda_topic_words)
