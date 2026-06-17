@@ -54,10 +54,7 @@ pip-selfcheck.json
 *.log
 logs/
 
-# Data files (large / sensitive)
-data/*.csv
-data/*.json
-data/*.jsonl
+# Локальные БД (генерируются скриптами, не коммитим)
 data/*.db
 data/*.sqlite
 
@@ -66,3 +63,4 @@ data/*.sqlite
 htmlcov/
 .pytest_cache/
 .cursor
+course_docs
