@@ -2,7 +2,7 @@
 
 Пошаговая инструкция: от `git clone` до сайта на своём домене с HTTPS.
 
-Схема: **Next.js static export** → папка `web/out/` → **PM2 + serve** на `:3000` → **nginx** reverse proxy → домен + SSL.
+Схема: **Next.js static export** → папка `web/out/` → **PM2 + serve** на `:3010` → **nginx** reverse proxy → домен + SSL.
 
 Замените `example.com` на свой домен везде, где встречается.
 
@@ -88,7 +88,7 @@ pm2 save
 
 ```bash
 pm2 status
-curl -s -o /dev/null -w "%{http_code}\n" http://127.0.0.1:3000/
+curl -s -o /dev/null -w "%{http_code}\n" http://127.0.0.1:3010/
 # ожидается 200
 ```
 
@@ -138,14 +138,14 @@ server {
         image/svg+xml;
 
     location /_next/static/ {
-        proxy_pass http://127.0.0.1:3000;
+        proxy_pass http://127.0.0.1:3010;
         proxy_http_version 1.1;
         proxy_set_header Host $host;
         add_header Cache-Control "public, max-age=31536000, immutable";
     }
 
     location / {
-        proxy_pass http://127.0.0.1:3000;
+        proxy_pass http://127.0.0.1:3010;
         proxy_http_version 1.1;
         proxy_set_header Host $host;
         proxy_set_header X-Real-IP $remote_addr;
@@ -239,7 +239,7 @@ ssh root@ВАШ_IP "pm2 reload music-exile"
 | 502 Bad Gateway | PM2 не запущен: `pm2 start web/ecosystem.config.cjs` |
 | Сайт не поднялся после reboot | `pm2 startup` + `pm2 save` |
 | `npm run build` OOM | Собрать на Mac + rsync (раздел 6) |
-| Порт 3000 занят | В `ecosystem.config.cjs` сменить порт и nginx `proxy_pass` |
+| Порт 3010 занят | В `ecosystem.config.cjs` сменить `LISTEN_PORT` и nginx `proxy_pass` |
 
 ---
 
@@ -249,7 +249,7 @@ ssh root@ВАШ_IP "pm2 reload music-exile"
 - [ ] `metadataBase` в `web/app/layout.tsx` = ваш домен
 - [ ] `npm run build` проходит без ошибок
 - [ ] `pm2 status` — `music-exile` online
-- [ ] `curl localhost:3000` → 200
+- [ ] `curl localhost:3010` → 200
 - [ ] Сайт открывается по HTTPS
 - [ ] `pm2 startup` настроен
 
