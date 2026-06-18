@@ -185,11 +185,12 @@ export default function ViolinChart({ data, width = 560, height = 360 }: Props) 
   }, [data, width, height]);
 
   return (
-    <div>
+    <div className="chart-wrap">
       <svg
         ref={svgRef}
         viewBox={`0 0 ${width} ${height}`}
         width="100%"
+        preserveAspectRatio="xMidYMid meet"
         style={{ maxWidth: width, background: colors.paper, display: "block" }}
         aria-label="Violin-диаграмма распределения тональности до и после"
         role="img"

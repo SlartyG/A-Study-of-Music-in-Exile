@@ -86,6 +86,7 @@ function ScrollStep({
   return (
     <div
       ref={ref}
+      className="scrolly-step"
       style={{
         padding: "80px 0",
         opacity: isActive ? 1 : 0.4,
@@ -119,15 +120,7 @@ export default function ScrollySentiment({
 
   return (
     <section id="results" className="section" style={{ background: "var(--paper)" }}>
-      <div
-        className="container--wide"
-        style={{
-          display: "grid",
-          gridTemplateColumns: "380px 1fr",
-          gap: 48,
-          alignItems: "start",
-        }}
-      >
+      <div className="container--wide scrolly-grid">
         {/* Left: steps */}
         <div>
           <div style={{ paddingTop: 0 }}>
@@ -162,6 +155,7 @@ export default function ScrollySentiment({
                     fontSize: "17px",
                     lineHeight: 1.75,
                     color: "var(--ash)",
+                    maxWidth: "100%",
                   }}
                 >
                   {para}
@@ -172,24 +166,14 @@ export default function ScrollySentiment({
         </div>
 
         {/* Right: sticky chart */}
-        <div
-          style={{
-            position: "sticky",
-            top: "10vh",
-            maxHeight: "80vh",
-            display: "flex",
-            alignItems: "flex-start",
-            paddingTop: 80,
-          }}
-        >
+        <div className="scrolly-charts">
           {charts.map((chart, i) => (
             <div
               key={i}
+              className={`scrolly-chart-item ${
+                i === 0 ? "scrolly-chart-item--active" : "scrolly-chart-item--stacked"
+              }${activeStep !== i ? " scrolly-chart-item--inactive" : ""}`}
               style={{
-                position: i === 0 ? "relative" : "absolute",
-                top: 0,
-                left: 0,
-                right: 0,
                 opacity: activeStep === i ? 1 : 0,
                 filter: activeStep === i ? "blur(0)" : "blur(6px)",
                 transition: "opacity 500ms ease-out, filter 500ms ease-out",
@@ -201,22 +185,6 @@ export default function ScrollySentiment({
           ))}
         </div>
       </div>
-
-      <style>{`
-        @media (max-width: 900px) {
-          section#results .container--wide {
-            grid-template-columns: 1fr !important;
-          }
-          section#results [style*="sticky"] {
-            position: relative !important;
-            top: auto !important;
-            padding-top: 0 !important;
-          }
-          section#results [style*="absolute"] {
-            position: relative !important;
-          }
-        }
-      `}</style>
 
       {selectedArtist && (
         <ArtistPanel artist={selectedArtist} onClose={() => setSelectedArtist(null)} />

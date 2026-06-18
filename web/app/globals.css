@@ -149,7 +149,7 @@ a:hover {
 
 @media (max-width: 640px) {
   .container, .container--wide {
-    padding: 0 16px;
+    padding: 0 12px;
   }
   html {
     font-size: 16px;
@@ -159,6 +159,180 @@ a:hover {
   }
   h3 {
     font-size: 26px;
+  }
+}
+
+/* ── Artist grid (mobile: 2 columns, tight gutters) ─────────────────────── */
+.artist-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 20px;
+}
+
+.artist-grid > [role="listitem"] {
+  min-width: 0;
+  display: flex;
+}
+
+.artist-grid .artist-card {
+  flex: 1;
+}
+
+@media (max-width: 640px) {
+  #artists .container--wide {
+    padding-left: 8px;
+    padding-right: 8px;
+  }
+
+  .artist-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+  }
+
+  .artist-card {
+    width: 100% !important;
+    max-width: none !important;
+    min-height: 0 !important;
+  }
+
+  .artist-card__media {
+    height: 96px !important;
+  }
+
+  .artist-card__body {
+    padding: 10px 10px 12px !important;
+  }
+
+  .artist-card__name {
+    font-size: 14px !important;
+  }
+
+  .artist-card__real-name {
+    font-size: 11px !important;
+  }
+
+  .artist-card__meta {
+    font-size: 9px !important;
+  }
+
+  .artist-card__stats {
+    font-size: 9px !important;
+    flex-wrap: wrap;
+    gap: 4px;
+  }
+
+  .artist-card .stamp {
+    font-size: 8px !important;
+    padding: 2px 4px !important;
+    top: 88px !important;
+    right: 4px !important;
+  }
+}
+
+/* ── Scrolly sentiment (section 04) ─────────────────────────────────────── */
+.scrolly-grid {
+  display: grid;
+  grid-template-columns: 380px 1fr;
+  gap: 48px;
+  align-items: start;
+}
+
+.scrolly-grid > * {
+  min-width: 0;
+}
+
+.scrolly-charts {
+  position: sticky;
+  top: 10vh;
+  max-height: 80vh;
+  display: flex;
+  align-items: flex-start;
+  padding-top: 80px;
+}
+
+.scrolly-chart-item {
+  width: 100%;
+  max-width: 100%;
+}
+
+.scrolly-chart-item--stacked {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+}
+
+.scrolly-chart-item--active {
+  position: relative;
+}
+
+.chart-wrap {
+  max-width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.chart-wrap svg {
+  display: block;
+  max-width: 100%;
+  height: auto;
+}
+
+@media (max-width: 900px) {
+  .scrolly-grid {
+    grid-template-columns: 1fr;
+    gap: 32px;
+  }
+
+  .scrolly-charts {
+    position: relative;
+    top: auto;
+    max-height: none;
+    padding-top: 0;
+    min-height: 0;
+  }
+
+  .scrolly-chart-item--stacked {
+    position: relative;
+  }
+
+  .scrolly-chart-item--inactive {
+    display: none !important;
+  }
+}
+
+@media (max-width: 640px) {
+  .scrolly-step {
+    padding: 48px 0 !important;
+  }
+
+  .summary-table-grid {
+    font-size: 10px !important;
+  }
+
+  .summary-table-grid > div {
+    padding: 6px 6px !important;
+  }
+
+  .summary-table-header > div {
+    font-size: 8px !important;
+    letter-spacing: 0.05em !important;
+  }
+}
+
+/* ── Methodology file links (conclusions) ─────────────────────────────────── */
+.methodology-files {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
+/* ── Topics charts on narrow screens ─────────────────────────────────────── */
+@media (max-width: 640px) {
+  .topics-charts-grid {
+    grid-template-columns: 1fr !important;
+    gap: 32px !important;
   }
 }
 
@@ -199,6 +373,11 @@ a:hover {
   border: none;
   border-top: 1px solid var(--grid);
   margin: 32px 0;
+}
+
+#main-content,
+.page-wrap {
+  overflow-x: clip;
 }
 
 /* ── Sidebar offset for SideNav ──────────────────────────────────────────── */

@@ -62,6 +62,7 @@ function Initials({ name }: { name: string }) {
   const { bg, fg } = AVATAR_PALETTE[nameHash(name) % AVATAR_PALETTE.length];
   return (
     <div
+      className="artist-card__media"
       style={{
         width: "100%",
         height: 170,
@@ -89,6 +90,7 @@ function ArtistPhoto({ name, photo }: { name: string; photo?: string }) {
   if (photo && imgOk) {
     return (
       <div
+        className="artist-card__media"
         style={{
           width: "100%",
           height: 170,
@@ -146,9 +148,11 @@ export default function ArtistCard({ artist, onClick }: Props) {
   return (
     <article
       ref={ref}
+      className="artist-card"
       onClick={onClick}
       style={{
-        width: 280,
+        width: "100%",
+        maxWidth: 280,
         minHeight: 340,
         flexShrink: 0,
         background: "var(--paper)",
@@ -200,10 +204,11 @@ export default function ArtistCard({ artist, onClick }: Props) {
         </span>
       )}
 
-      <div style={{ padding: "14px 16px 16px", flexGrow: 1 }}>
+      <div className="artist-card__body" style={{ padding: "14px 16px 16px", flexGrow: 1 }}>
 
         {/* Name */}
         <div
+          className="artist-card__name"
           style={{
             fontFamily: "var(--font-heading)",
             fontSize: "20px",
@@ -215,6 +220,7 @@ export default function ArtistCard({ artist, onClick }: Props) {
           {artist.display_name}
         </div>
         <div
+          className="artist-card__real-name"
           style={{
             fontFamily: "var(--font-body)",
             fontStyle: "italic",
@@ -226,7 +232,7 @@ export default function ArtistCard({ artist, onClick }: Props) {
           {artist.real_name !== artist.display_name ? artist.real_name : ""}
         </div>
 
-        <div style={{ marginTop: 12, display: "flex", flexDirection: "column", gap: 3 }}>
+        <div className="artist-card__meta" style={{ marginTop: 12, display: "flex", flexDirection: "column", gap: 3 }}>
           <div
             style={{
               fontFamily: "var(--font-mono)",
@@ -248,6 +254,7 @@ export default function ArtistCard({ artist, onClick }: Props) {
         </div>
 
         <div
+          className="artist-card__stats"
           style={{
             marginTop: 14,
             paddingTop: 12,

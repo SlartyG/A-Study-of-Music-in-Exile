@@ -99,17 +99,16 @@ export default function ArtistGrid({ artists }: { artists: ArtistMeta[] }) {
 
         {/* Cards grid */}
         <div
-          style={{
-            display: "flex",
-            flexWrap: "wrap",
-            gap: 20,
-          }}
+          className="artist-grid"
           role="list"
           aria-label={`Список артистов (${filtered.length})`}
         >
           {filtered.map((artist) => (
             <div key={artist.pseudonym} role="listitem">
-              <ArtistCard artist={artist} onClick={() => setSelected(artist)} />
+              <ArtistCard
+                artist={artist}
+                onClick={() => setSelected(artist)}
+              />
             </div>
           ))}
         </div>

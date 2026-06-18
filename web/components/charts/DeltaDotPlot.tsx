@@ -34,11 +34,12 @@ export default function DeltaDotPlot({ artists, onArtistClick }: Props) {
   const tickVals = [-0.02, -0.01, 0, 0.01, 0.02];
 
   return (
-    <div style={{ position: "relative", maxWidth: W }}>
+    <div className="chart-wrap" style={{ position: "relative", maxWidth: "100%" }}>
       <svg
         viewBox={`0 0 ${W} ${H}`}
         width="100%"
-        style={{ background: colors.paper, display: "block", overflow: "visible" }}
+        preserveAspectRatio="xMidYMid meet"
+        style={{ background: colors.paper, display: "block", overflow: "hidden" }}
         role="img"
         aria-label="Дельта тональности по артистам"
       >

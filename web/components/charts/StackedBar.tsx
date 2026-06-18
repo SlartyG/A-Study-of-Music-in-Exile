@@ -43,10 +43,11 @@ export default function StackedBar({ topics }: Props) {
   );
 
   return (
-    <div style={{ position: "relative" }}>
+    <div className="chart-wrap" style={{ position: "relative" }}>
       <svg
         viewBox={`0 0 ${W + 140} ${H + 60}`}
         width="100%"
+        preserveAspectRatio="xMidYMid meet"
         style={{ maxWidth: W + 140, display: "block" }}
         role="img"
         aria-label="Тематическая структура текстов до и после отъезда"

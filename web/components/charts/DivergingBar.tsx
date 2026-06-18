@@ -30,11 +30,12 @@ export default function DivergingBar({ topics }: Props) {
   }
 
   return (
-    <div style={{ position: "relative" }}>
+    <div className="chart-wrap" style={{ position: "relative" }}>
       <svg
         viewBox={`0 0 ${W} ${H}`}
         width="100%"
-        style={{ background: colors.paper, display: "block", overflow: "visible" }}
+        preserveAspectRatio="xMidYMid meet"
+        style={{ background: colors.paper, display: "block", overflow: "hidden" }}
         role="img"
         aria-label="Изменение доли тем после отъезда"
       >

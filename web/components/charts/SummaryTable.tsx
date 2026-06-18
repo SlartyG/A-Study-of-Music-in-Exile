@@ -21,7 +21,8 @@ const ROWS = [
 
 export default function SummaryTable() {
   return (
-    <div>
+    <div className="chart-wrap">
+      <div style={{ minWidth: 0 }}>
       {/* Document header */}
       <div
         style={{
@@ -37,16 +38,19 @@ export default function SummaryTable() {
       </div>
 
       <div
+        className="summary-table-grid"
         style={{
           border: `1px solid ${colors.ash}`,
           borderRadius: 2,
           overflow: "hidden",
           fontFamily: "var(--font-mono)",
           fontSize: "13px",
+          minWidth: 280,
         }}
       >
         {/* Header row */}
         <div
+          className="summary-table-header"
           style={{
             display: "grid",
             gridTemplateColumns: "2fr 1fr 1fr 1fr 1.2fr",
@@ -74,6 +78,7 @@ export default function SummaryTable() {
         {ROWS.map((row, i) => (
           <div
             key={i}
+            className="summary-table-grid"
             style={{
               display: "grid",
               gridTemplateColumns: "2fr 1fr 1fr 1fr 1.2fr",
@@ -111,6 +116,7 @@ export default function SummaryTable() {
         n.s. — разница не достигает статистической значимости (p &gt; 0,05)
         <br />
         d — размер эффекта; d &lt; 0,2 считается малым
+      </div>
       </div>
     </div>
   );

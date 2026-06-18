@@ -185,7 +185,7 @@ export default function Conclusions() {
           >
             <p>
               Методология подробно:{" "}
-              <span style={{ fontFamily: "var(--font-mono)", fontSize: 12 }}>
+              <span className="methodology-files">
                 METHODOLOGY_LEXICAL.md&nbsp;/&nbsp;METHODOLOGY_TOPIC_MODELING.md&nbsp;/&nbsp;METHODOLOGY_TRANSFORMERS.md
               </span>
             </p>

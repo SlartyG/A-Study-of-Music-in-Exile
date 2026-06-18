@@ -26,14 +26,7 @@ export default function TopicsSection({ topics }: { topics: Topic[] }) {
           </p>
         </div>
 
-        <div
-          style={{
-            display: "grid",
-            gridTemplateColumns: "1fr 1fr",
-            gap: 48,
-            alignItems: "start",
-          }}
-        >
+        <div className="topics-charts-grid" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 48, alignItems: "start" }}>
           <div>
             <h3
               style={{
@@ -103,13 +96,6 @@ export default function TopicsSection({ topics }: { topics: Topic[] }) {
         </div>
       </div>
 
-      <style>{`
-        @media (max-width: 768px) {
-          section#topics .container--wide [style*="grid-template-columns: 1fr 1fr"] {
-            grid-template-columns: 1fr !important;
-          }
-        }
-      `}</style>
     </section>
   );
 }
